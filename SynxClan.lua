@@ -249,33 +249,30 @@ task.spawn(function()
     end
 end)
 
-local player = game.Players.LocalPlayer
-local leaderstats = player:WaitForChild("leaderstats")
-
-local farmTab = window:AddTab("Fast Farm")
+local StrTab = window:AddTab("Fast Strength")
 
 local strengthStat = leaderstats:WaitForChild("Strength")
 local durabilityStat = leaderstats:WaitForChild("Durability")
 
-farmTab:AddLabel("📊 Stats:").TextSize = 17
-local stopwatchLabel = farmTab:AddLabel("0d 0h 0m 0s - Fast Rep Inactive")
+StrTab:AddLabel("📊 Stats:").TextSize = 17
+local stopwatchLabel = StrTab:AddLabel("0d 0h 0m 0s - Fast Rep Inactive")
 stopwatchLabel.TextSize = 15
 stopwatchLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
 
-local projectedStrengthLabel = farmTab:AddLabel("Strength: /Hour | /Day | /Week")
+local projectedStrengthLabel = StrTab:AddLabel("Strength: /Hour | /Day | /Week")
 projectedStrengthLabel.TextSize = 15
-local averageStrengthLabel = farmTab:AddLabel("Average: /Hour | /Day | /Week")
+local averageStrengthLabel = StrTab:AddLabel("Average: /Hour | /Day | /Week")
 averageStrengthLabel.TextSize = 15
-farmTab:AddLabel("")
-local projectedDurabilityLabel = farmTab:AddLabel("Dura: /Hour | /Day | /Week")
+StrTab:AddLabel("")
+local projectedDurabilityLabel = StrTab:AddLabel("Dura: /Hour | /Day | /Week")
 projectedDurabilityLabel.TextSize = 15
-local averageDurabilityLabel = farmTab:AddLabel("Average: /Hour | /Day | /Week")
+local averageDurabilityLabel = StrTab:AddLabel("Average: /Hour | /Day | /Week")
 averageDurabilityLabel.TextSize = 15
-farmTab:AddLabel("")
+StrTab:AddLabel("")
 
-local strengthLabel = farmTab:AddLabel("Strength: " .. formatNumber(strengthStat.Value) .. " | Gained: 0")
+local strengthLabel = StrTab:AddLabel("Strength: " .. formatNumber(strengthStat.Value) .. " | Gained: 0")
 strengthLabel.TextSize = 15
-local durabilityLabel = farmTab:AddLabel("Durability: " .. formatNumber(durabilityStat.Value) .. " | Gained: 0")
+local durabilityLabel = StrTab:AddLabel("Durability: " .. formatNumber(durabilityStat.Value) .. " | Gained: 0")
 durabilityLabel.TextSize = 15
 
 local startTime = 0
@@ -411,8 +408,8 @@ task.spawn(function()
     end
 end)
 
-farmTab:AddLabel("")
-farmTab:AddLabel("⚡ Fast Farm:").TextSize = 17
+StrTab:AddLabel("")
+StrTab:AddLabel("⚡ Fast Farm:").TextSize = 17
 local farmRunning = false
 local repSpeed = 350
 local pingControl = true
@@ -435,14 +432,14 @@ local function getAdaptiveSpeed(ping)
     end
 end
 
-farmTab:AddTextBox("Rep Speed:", function(inputText)
+StrTab:AddTextBox("Rep Speed:", function(inputText)
     local speedValue = tonumber(inputText)
     if speedValue then
         repSpeed = math.clamp(math.floor(speedValue), 1, 1000)
     end
 end)
 
-farmTab:AddSwitch("Controlled Speed", function(isEnabled)
+StrTab:AddSwitch("Controlled Speed", function(isEnabled)
     pingControl = isEnabled
 end):Set(true)
 
@@ -466,7 +463,7 @@ local function startAutoRep()
     end
 end
 
-farmTab:AddSwitch("Fast Rep", function(isEnabled)
+StrTab:AddSwitch("Fast Rep", function(isEnabled)
     farmRunning = isEnabled
     if farmRunning then
         runFastRep = true
@@ -476,8 +473,8 @@ farmTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-farmTab:AddLabel("For me, 20-40 works the best").TextSize = 15
-farmTab:AddLabel("Try Around!")
+StrTab:AddLabel("For me, 20-40 works the best").TextSize = 15
+StrTab:AddLabel("Try Around!")
 
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Tools Farm")
