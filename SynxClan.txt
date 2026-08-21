@@ -1,5 +1,10 @@
 -- This script was created by Yusuf. If you intend to use this code to "skid," know this: skids only fool themselves; using someone else's code and passing it off as your own is for idiots.
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local rEvents = ReplicatedStorage:WaitForChild("rEvents")
+local muscleEvent = rEvents:WaitForChild("muscleEvent")
+local rebirthEvent = rEvents:WaitForChild("rebirthEvent")
+
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/Syn-Paid-Ui/refs/heads/main/SynioxGui.txt"))()
 local displayName = player.DisplayName
 
