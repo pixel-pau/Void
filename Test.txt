@@ -58,7 +58,6 @@ local projectedStrengthLabel = StrTab:AddLabel("Strength: /Hour | /Day | /Week")
 projectedStrengthLabel.TextSize = 15
 local averageStrengthLabel = StrTab:AddLabel("Average: /Hour | /Day | /Week")
 averageStrengthLabel.TextSize = 15
-StrTab:AddLabel("")
 local projectedDurabilityLabel = StrTab:AddLabel("Dura: /Hour | /Day | /Week")
 projectedDurabilityLabel.TextSize = 15
 local averageDurabilityLabel = StrTab:AddLabel("Average: /Hour | /Day | /Week")
