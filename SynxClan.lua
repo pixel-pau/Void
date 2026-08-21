@@ -503,7 +503,7 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-StrTab:AddButton("🌴 Jungle Squat", function()
+_G.StrTab:AddButton("🌴 Jungle Squat", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
@@ -516,7 +516,7 @@ StrTab:AddButton("🌴 Jungle Squat", function()
     end
 end)
 
-StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
@@ -533,7 +533,7 @@ StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
     end
 end)
 
-StrTab:AddButton("🐱 Equip Swift Samurai", function()
+_G.StrTab:AddButton("🐱 Equip Swift Samurai", function()
     local petsFolder = player.petsFolder
     for _, folder in pairs(petsFolder:GetChildren()) do
         if folder:IsA("Folder") then
