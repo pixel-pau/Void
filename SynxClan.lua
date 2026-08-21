@@ -258,7 +258,7 @@ rebirthTab:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     end
 end)
 
-rebirthTab:AddButton("🏋️‍♂️ Jungle Lift",function()
+rebirthTab:AddSwitch("🏋️‍♂️ Jungle Lift",function()
     hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
     task.wait(0.2)
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
@@ -502,25 +502,6 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     else 
         _G.runFastRep = false
     end
-end)
-
-_G.char = _G.player.Character or _G.player.CharacterAdded:wait()
-_G.hrp = _G.char:WaitForChild("HumanoidRootPart")
-
-_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift",function()
-    _G.hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
-    task.wait(0.2)
-    _G.VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
-    _G.VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-end)
-
-_G.StrTab:AddButton("🌴 Jungle Squat",function()
-    _G.hrp.CFrame = CFrame.new(-8371.43359375, 6.79806327, 2858.88525390)
-    task.wait(0.2)
-    _G.VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
-    _G.VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end)
 
 local AutoFarm = window:AddTab("Farm")
