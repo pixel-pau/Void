@@ -249,21 +249,21 @@ task.spawn(function()
     end
 end)
 
-rebirthTab:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not bool
+_G.rebirthTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+    local character = _G.player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        task.wait(0.5)
+        local machine = findMachine("Jungle Bar Lift")
+        if machine and machine:FindFirstChild("interactSeat") then
+            local retryCount = 0
+            repeat
+                task.wait(0.2)
+                pressE()
+                retryCount = retryCount + 1
+            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
         end
     end
-end)
-
-rebirthTab:AddSwitch("🏋️‍♂️ Jungle Lift",function()
-    hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
-    task.wait(0.2)
-    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
-    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end)
 
 _G.StrTab = window:AddTab("Fast Strength")
@@ -295,7 +295,6 @@ _G.projectedStrengthLabel = _G.StrTab:AddLabel("Strength: /Hour | /Day | /Week")
 _G.projectedStrengthLabel.TextSize = 15
 _G.averageStrengthLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
 _G.averageStrengthLabel.TextSize = 15
-_G.StrTab:AddLabel("")
 _G.projectedDurabilityLabel = _G.StrTab:AddLabel("Dura: /Hour | /Day | /Week")
 _G.projectedDurabilityLabel.TextSize = 15
 _G.averageDurabilityLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
@@ -501,6 +500,36 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
         task.spawn(_G.startAutoRep)
     else 
         _G.runFastRep = false
+    end
+end)
+
+_G.StrTab:AddButton("🌴 Jungle Squat", function()
+    local character = _G.player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
+        task.wait(0.5)
+        local machine = findMachine("Jungle Squat Rack") or findMachine("Squat Rack")
+        if machine and machine:FindFirstChild("interactSeat") then
+            local retry = 0
+            repeat task.wait(0.2); pressE(); retry = retry + 1 until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retry > 10
+        end
+    end
+end)
+
+_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+    local character = _G.player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        task.wait(0.5)
+        local machine = findMachine("Jungle Bar Lift")
+        if machine and machine:FindFirstChild("interactSeat") then
+            local retryCount = 0
+            repeat
+                task.wait(0.2)
+                pressE()
+                retryCount = retryCount + 1
+            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
+        end
     end
 end)
 
