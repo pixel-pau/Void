@@ -266,6 +266,12 @@ rebirthTab:AddButton("🏋️‍♂️ Jungle Lift",function()
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end)
 
+
+
+
+
+
+
 local StrTab = window:AddTab("Fast Strength")
 
 local function formatNumber(num)
