@@ -1,5 +1,17 @@
 -- This script was created by Yusuf. If you intend to use this code to "skid," know this: skids only fool themselves; using someone else's code and passing it off as your own is for idiots.
 
+local players = game:GetService("Players")
+local player = players.LocalPlayer
+
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local muscleEvent = player:WaitForChild("muscleEvent")
+local leaderstats = player:WaitForChild("leaderstats")
+local rebirthsStat = leaderstats:WaitForChild("Rebirths")
+local displayName = player.DisplayName
+local virtualUser = game:GetService("VirtualUser")
+local lighting = game:GetService("Lighting")
+
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/Syn-Paid-Ui/refs/heads/main/SynioxGui.txt"))()
 local player = game.Players.LocalPlayer
 local displayName = player.DisplayName
