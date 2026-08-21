@@ -41,7 +41,13 @@ local function formatNumber(num)
 end
 
 local strengthStat = leaderstats:WaitForChild("Strength")
-local durabilityStat = leaderstats:WaitForChild("Durability")
+local durabilityStat = player:FindFirstChild("Durability") or leaderstats:FindFirstChild("Durability")
+if not durabilityStat then
+    durabilityStat = Instance.new("IntValue")
+    durabilityStat.Name = "Durability"
+    durabilityStat.Parent = player
+    durabilityStat.Value = 0
+end
 
 StrTab:AddLabel("📊 Stats:").TextSize = 17
 local stopwatchLabel = StrTab:AddLabel("0d 0h 0m 0s - Fast Rep Inactive")
