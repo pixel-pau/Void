@@ -504,20 +504,20 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
 end)
 
 StrTab:AddButton("🌴 Jungle Squat", function()
-    local character = _G.player.Character
+    local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
         task.wait(0.5)
         local machine = findMachine("Jungle Squat Rack") or findMachine("Squat Rack")
         if machine and machine:FindFirstChild("interactSeat") then
             local retry = 0
-            repeat task.wait(0.2); pressE(); retry = retry + 1 until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retry > 10
+            repeat task.wait(0.2); pressE(); retry = retry + 1 until (player.Character and player.Character.Humanoid.Sit) or retry > 10
         end
     end
 end)
 
 StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
-    local character = _G.player.Character
+    local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
         task.wait(0.5)
@@ -528,31 +528,31 @@ StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
                 task.wait(0.2)
                 pressE()
                 retryCount = retryCount + 1
-            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
+            until (player.Character and player.Character.Humanoid.Sit) or retryCount > 10
         end
     end
 end)
 
 StrTab:AddButton("🐱 Equip Swift Samurai", function()
-    local petsFolder = game.Players.LocalPlayer.petsFolder
+    local petsFolder = player.petsFolder
     for _, folder in pairs(petsFolder:GetChildren()) do
         if folder:IsA("Folder") then
             for _, pet in pairs(folder:GetChildren()) do
-                game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                rEvents.equipPetEvent:FireServer("unequipPet", pet)
             end
         end
     end
     task.wait(0.2)
 
     local petsToEquip = {}
-    for _, pet in pairs(game.Players.LocalPlayer.petsFolder.Unique:GetChildren()) do
+    for _, pet in pairs(player.petsFolder.Unique:GetChildren()) do
         if pet.Name == "Swift Samurai" then
             table.insert(petsToEquip, pet)
         end
     end
 
     for i = 1, math.min(8, #petsToEquip) do
-        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
+        rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
         task.wait(0.1)
     end
 end)
