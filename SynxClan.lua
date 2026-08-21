@@ -2177,9 +2177,9 @@ local pets = window:AddTab("Pets")
 pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local selectedPet = "Neon Guardian"
-local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
-    selectedPet = text
+_G.selectedPet = "Neon Guardian"
+local petDropdown = _G.pets:AddDropdown("🐢 Select Pet", function(text)
+    _G.selectedPet = text
 end)
 
 petDropdown:Add("Neon Guardian")
@@ -2219,14 +2219,20 @@ petDropdown:Add("White Pegasus")
 petDropdown:Add("White Pheonix")
 petDropdown:Add("Yellow Butterfly")
 
-pets:AddSwitch("Auto Open Pet", function(bool)
+_G.pets:AddSwitch("Auto Open Pet", function(bool)
     _G.AutoHatchPet = bool
     if bool then
         spawn(function()
-            while _G.AutoHatchPet and selectedPet ~= "" do
-                local petToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedPet)
-                if petToOpen then
-                    ReplicatedStorage.cPetShopRemote:InvokeServer(petToOpen)
+            while _G.AutoHatchPet and _G.selectedPet ~= "" do
+                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                local petShopFolder = ReplicatedStorage:FindFirstChild("cPetShopFolder") or ReplicatedStorage:FindFirstChild("PetShopFolder") or ReplicatedStorage:FindFirstChild("PetShop")
+                local petShopRemote = ReplicatedStorage:FindFirstChild("cPetShopRemote") or ReplicatedStorage:FindFirstChild("PetShopRemote") or ReplicatedStorage:FindFirstChild("OpenPetRemote")
+
+                local petToOpen = petShopFolder and petShopFolder:FindFirstChild(_G.selectedPet)
+                if petToOpen and petShopRemote then
+                    pcall(function()
+                        petShopRemote:InvokeServer(petToOpen)
+                    end)
                 end
                 task.wait(0.1)
             end
