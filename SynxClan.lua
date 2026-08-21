@@ -249,6 +249,9 @@ task.spawn(function()
     end
 end)
 
+local player = game.Players.LocalPlayer
+local leaderstats = player:WaitForChild("leaderstats")
+
 local farmTab = window:AddTab("Fast Farm")
 
 local strengthStat = leaderstats:WaitForChild("Strength")
