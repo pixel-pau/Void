@@ -266,5 +266,21 @@ StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-StrTab:AddLabel("For me, 20-40 works the best").TextSize = 15
-StrTab:AddLabel("Try Around!")
+local char = player.Character or player.CharacterAdded:wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+StrTab:AddButton("🏋️‍♂️ Jungle Lift",function()
+    hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
+    task.wait(0.2)
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end)
+
+StrTab:AddButton("🌴 Jungle Squat",function()
+    hrp.CFrame = CFrame.new(-8371.43359375, 6.79806327, 2858.88525390)
+    task.wait(0.2)
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end)
