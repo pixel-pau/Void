@@ -474,9 +474,6 @@ farmTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-farmTab:AddLabel("For me, 20-40 works the best").TextSize = 15
-farmTab:AddLabel("Try Around!")
-
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Tools Farm")
 
