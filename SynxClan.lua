@@ -1,26 +1,17 @@
 -- This script was created by Yusuf. If you intend to use this code to "skid," know this: skids only fool themselves; using someone else's code and passing it off as your own is for idiots.
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ghjkl1312/bhkjhk/refs/heads/main/lib.luau", true))()
-local player = game.Players.LocalPlayer
-local displayName = player.DisplayName
-
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 local VirtualInputManager = game:GetService("VirtualInputManager")
-local replicatedStorage = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local muscleEvent = player:WaitForChild("muscleEvent")
 local leaderstats = player:WaitForChild("leaderstats")
 local rebirthsStat = leaderstats:WaitForChild("Rebirths")
-local virtualUser = game:GetService("VirtualUser")
-local lighting = game:GetService("Lighting")
+local rEvents = ReplicatedStorage:WaitForChild("rEvents")
 
-local targetRebirthValue = 0
-local autoEat30Enabled = false
-local autoEat60Enabled = false
-
-_G.targetRebirthActive = false
-_G.infiniteRebirthActive = false
-_G.autoSizeActive = false
-_G.teleportActive = false
-_G.repToggle = false
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/Syn-Paid-Ui/refs/heads/main/SynioxGui.txt"))()
+local player = game.Players.LocalPlayer
+local displayName = player.DisplayName
 
 local window = library:AddWindow("Syniox Private | Muscle Legends || HI - ".. displayName, {
     title_bar = {
