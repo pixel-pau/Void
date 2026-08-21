@@ -533,6 +533,30 @@ StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
     end
 end)
 
+StrTab:AddButton("🐱 Equip Swift Samurai", function()
+    local petsFolder = game.Players.LocalPlayer.petsFolder
+    for _, folder in pairs(petsFolder:GetChildren()) do
+        if folder:IsA("Folder") then
+            for _, pet in pairs(folder:GetChildren()) do
+                game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("unequipPet", pet)
+            end
+        end
+    end
+    task.wait(0.2)
+
+    local petsToEquip = {}
+    for _, pet in pairs(game.Players.LocalPlayer.petsFolder.Unique:GetChildren()) do
+        if pet.Name == "Swift Samurai" then
+            table.insert(petsToEquip, pet)
+        end
+    end
+
+    for i = 1, math.min(8, #petsToEquip) do
+        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
+        task.wait(0.1)
+    end
+end)
+
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Tools Farm")
 
