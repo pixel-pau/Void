@@ -249,8 +249,8 @@ task.spawn(function()
     end
 end)
 
-_G.rebirthTab:AddButton("🏋️‍♂️ Jungle Lift", function()
-    local character = _G.player.Character
+rebirthTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+    local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
         task.wait(0.5)
@@ -261,7 +261,7 @@ _G.rebirthTab:AddButton("🏋️‍♂️ Jungle Lift", function()
                 task.wait(0.2)
                 pressE()
                 retryCount = retryCount + 1
-            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
+            until (player.Character and player.Character.Humanoid.Sit) or retryCount > 10
         end
     end
 end)
@@ -503,7 +503,7 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-_G.StrTab:AddButton("🌴 Jungle Squat", function()
+StrTab:AddButton("🌴 Jungle Squat", function()
     local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
@@ -516,7 +516,7 @@ _G.StrTab:AddButton("🌴 Jungle Squat", function()
     end
 end)
 
-_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
     local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
