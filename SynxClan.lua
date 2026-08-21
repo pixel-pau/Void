@@ -266,6 +266,263 @@ rebirthTab:AddButton("🏋️‍♂️ Jungle Lift",function()
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end)
 
+_G.StrTab = window:AddTab("Fast Strength")
+
+function _G.formatNumber(num)
+    if num >= 1e15 then return string.format("%.2fQa", num/1e15) end
+    if num >= 1e12 then return string.format("%.2fT", num/1e12) end
+    if num >= 1e9 then return string.format("%.2fB", num/1e9) end
+    if num >= 1e6 then return string.format("%.2fM", num/1e6) end
+    if num >= 1e3 then return string.format("%.2fK", num/1e3) end
+    return string.format("%.0f", num)
+end
+
+_G.strengthStat = leaderstats:WaitForChild("Strength")
+_G.durabilityStat = player:FindFirstChild("Durability") or leaderstats:FindFirstChild("Durability")
+if not _G.durabilityStat then
+    _G.durabilityStat = Instance.new("IntValue")
+    _G.durabilityStat.Name = "Durability"
+    _G.durabilityStat.Parent = player
+    _G.durabilityStat.Value = 0
+end
+
+_G.StrTab:AddLabel("📊 Stats:").TextSize = 17
+_G.stopwatchLabel = _G.StrTab:AddLabel("0d 0h 0m 0s - Fast Rep Inactive")
+_G.stopwatchLabel.TextSize = 15
+_G.stopwatchLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+
+_G.projectedStrengthLabel = _G.StrTab:AddLabel("Strength: /Hour | /Day | /Week")
+_G.projectedStrengthLabel.TextSize = 15
+_G.averageStrengthLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
+_G.averageStrengthLabel.TextSize = 15
+_G.StrTab:AddLabel("")
+_G.projectedDurabilityLabel = _G.StrTab:AddLabel("Dura: /Hour | /Day | /Week")
+_G.projectedDurabilityLabel.TextSize = 15
+_G.averageDurabilityLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
+_G.averageDurabilityLabel.TextSize = 15
+_G.StrTab:AddLabel("")
+
+_G.strengthLabel = _G.StrTab:AddLabel("Strength: " .. _G.formatNumber(_G.strengthStat.Value) .. " | Gained: 0")
+_G.strengthLabel.TextSize = 15
+_G.durabilityLabel = _G.StrTab:AddLabel("Durability: " .. _G.formatNumber(_G.durabilityStat.Value) .. " | Gained: 0")
+_G.durabilityLabel.TextSize = 15
+
+_G.startTime = 0
+_G.pausedElapsedTime = 0
+
+_G.runFastRep = false
+_G.trackingStarted = false
+
+_G.strengthHistory = {}
+_G.durabilityHistory = {}
+_G.calculationInterval = 10
+
+_G.initialStrength = _G.strengthStat.Value
+_G.initialDurability = _G.durabilityStat.Value
+
+_G.savedStrengthPerHour = 0
+_G.savedStrengthPerDay = 0
+_G.savedStrengthPerWeek = 0
+_G.savedDurabilityPerHour = 0
+_G.savedDurabilityPerDay = 0
+_G.savedDurabilityPerWeek = 0
+
+_G.savedAvgStrengthPerHour = 0
+_G.savedAvgStrengthPerDay = 0
+_G.savedAvgStrengthPerWeek = 0
+_G.savedAvgDurabilityPerHour = 0
+_G.savedAvgDurabilityPerDay = 0
+_G.savedAvgDurabilityPerWeek = 0
+
+task.spawn(function()
+    local lastCalcTime = tick()
+    while true do
+        local currentTime = tick()
+        local currentStrength = _G.strengthStat.Value
+        local currentDurability = _G.durabilityStat.Value
+
+        _G.strengthLabel.Text = "Strength: " .. _G.formatNumber(currentStrength) .. " | Gained: " .. _G.formatNumber(currentStrength - _G.initialStrength)
+        _G.durabilityLabel.Text = "Durability: " .. _G.formatNumber(currentDurability) .. " | Gained: " .. _G.formatNumber(currentDurability - _G.initialDurability)
+
+        if _G.runFastRep then
+            if not _G.trackingStarted then
+                _G.trackingStarted = true
+                _G.startTime = currentTime
+                _G.strengthHistory = {}
+                _G.durabilityHistory = {}
+                
+                if _G.savedStrengthPerHour > 0 then
+                    _G.projectedStrengthLabel.Text = "Strength: " .. _G.formatNumber(_G.savedStrengthPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedStrengthPerDay) .. "/Day | " .. _G.formatNumber(_G.savedStrengthPerWeek) .. "/Week"
+                    _G.projectedDurabilityLabel.Text = "Dura: " .. _G.formatNumber(_G.savedDurabilityPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedDurabilityPerDay) .. "/Day | " .. _G.formatNumber(_G.savedDurabilityPerWeek) .. "/Week"
+                    _G.averageStrengthLabel.Text = "Average: " .. _G.formatNumber(_G.savedAvgStrengthPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedAvgStrengthPerDay) .. "/Day | " .. _G.formatNumber(_G.savedAvgStrengthPerWeek) .. "/Week"
+                    _G.averageDurabilityLabel.Text = "Average: " .. _G.formatNumber(_G.savedAvgDurabilityPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedAvgDurabilityPerDay) .. "/Day | " .. _G.formatNumber(_G.savedAvgDurabilityPerWeek) .. "/Week"
+                end
+            end
+            
+            local elapsedTime = _G.pausedElapsedTime + (currentTime - _G.startTime)
+            local days = math.floor(elapsedTime / (24 * 3600))
+            local hours = math.floor((elapsedTime % (24 * 3600)) / 3600)
+            local minutes = math.floor((elapsedTime % 3600) / 60)
+            local seconds = math.floor(elapsedTime % 60)
+            _G.stopwatchLabel.Text = string.format("%dd %dh %dm %ds - Farming", days, hours, minutes, seconds)
+            _G.stopwatchLabel.TextColor3 = Color3.fromRGB(50, 255, 50)
+
+            table.insert(_G.strengthHistory, {time = currentTime, value = currentStrength})
+            table.insert(_G.durabilityHistory, {time = currentTime, value = currentDurability})
+
+            while #_G.strengthHistory > 0 and currentTime - _G.strengthHistory[1].time > _G.calculationInterval do
+                table.remove(_G.strengthHistory, 1)
+            end
+            while #_G.durabilityHistory > 0 and currentTime - _G.durabilityHistory[1].time > _G.calculationInterval do
+                table.remove(_G.durabilityHistory, 1)
+            end
+
+            if currentTime - lastCalcTime >= _G.calculationInterval then
+                lastCalcTime = currentTime
+
+                if #_G.strengthHistory >= 2 then
+                    local strengthDelta = _G.strengthHistory[#_G.strengthHistory].value - _G.strengthHistory[1].value
+                    local strengthPerSecond = strengthDelta / _G.calculationInterval
+                    _G.savedStrengthPerHour = strengthPerSecond * 3600
+                    _G.savedStrengthPerDay = strengthPerSecond * 86400
+                    _G.savedStrengthPerWeek = strengthPerSecond * 604800
+                    _G.projectedStrengthLabel.Text = "Strength: " .. _G.formatNumber(_G.savedStrengthPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedStrengthPerDay) .. "/Day | " .. _G.formatNumber(_G.savedStrengthPerWeek) .. "/Week"
+                end
+
+                if #_G.durabilityHistory >= 2 then
+                    local durabilityDelta = _G.durabilityHistory[#_G.durabilityHistory].value - _G.durabilityHistory[1].value
+                    local durabilityPerSecond = durabilityDelta / _G.calculationInterval
+                    _G.savedDurabilityPerHour = durabilityPerSecond * 3600
+                    _G.savedDurabilityPerDay = durabilityPerSecond * 86400
+                    _G.savedDurabilityPerWeek = durabilityPerSecond * 604800
+                    _G.projectedDurabilityLabel.Text = "Dura: " .. _G.formatNumber(_G.savedDurabilityPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedDurabilityPerDay) .. "/Day | " .. _G.formatNumber(_G.savedDurabilityPerWeek) .. "/Week"
+                end
+
+                local totalElapsed = _G.pausedElapsedTime + (currentTime - _G.startTime)
+                if totalElapsed > 0 then
+                    local avgStrengthPerSecond = (currentStrength - _G.initialStrength) / totalElapsed
+                    _G.savedAvgStrengthPerHour = avgStrengthPerSecond * 3600
+                    _G.savedAvgStrengthPerDay = avgStrengthPerSecond * 86400
+                    _G.savedAvgStrengthPerWeek = avgStrengthPerSecond * 604800
+                    _G.averageStrengthLabel.Text = "Average: " .. _G.formatNumber(_G.savedAvgStrengthPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedAvgStrengthPerDay) .. "/Day | " .. _G.formatNumber(_G.savedAvgStrengthPerWeek) .. "/Week"
+
+                    local avgDurabilityPerSecond = (currentDurability - _G.initialDurability) / totalElapsed
+                    _G.savedAvgDurabilityPerHour = avgDurabilityPerSecond * 3600
+                    _G.savedAvgDurabilityPerDay = avgDurabilityPerSecond * 86400
+                    _G.savedAvgDurabilityPerWeek = avgDurabilityPerSecond * 604800
+                    _G.averageDurabilityLabel.Text = "Average: " .. _G.formatNumber(_G.savedAvgDurabilityPerHour) .. "/Hour | " .. _G.formatNumber(_G.savedAvgDurabilityPerDay) .. "/Day | " .. _G.formatNumber(_G.savedAvgDurabilityPerWeek) .. "/Week"
+                end
+            end
+        else
+            if _G.trackingStarted then
+                _G.trackingStarted = false
+                _G.pausedElapsedTime = _G.pausedElapsedTime + (currentTime - _G.startTime)
+                local days = math.floor(_G.pausedElapsedTime / (24 * 3600))
+                local hours = math.floor((_G.pausedElapsedTime % (24 * 3600)) / 3600)
+                local minutes = math.floor((_G.pausedElapsedTime % 3600) / 60)
+                local seconds = math.floor(_G.pausedElapsedTime % 60)
+                
+                if _G.pausedElapsedTime > 0 then
+                    _G.stopwatchLabel.Text = string.format("%dd %dh %dm %ds - Farming Paused", days, hours, minutes, seconds)
+                    _G.stopwatchLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+                else
+                    _G.stopwatchLabel.Text = "0d 0h 0m 0s - Fast Rep Inactive"
+                    _G.stopwatchLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+                end
+
+                _G.strengthHistory = {}
+                _G.durabilityHistory = {}
+            end
+        end
+
+        task.wait(0.05)
+    end
+end)
+
+_G.StrTab:AddLabel("")
+_G.StrTab:AddLabel("⚡ Fast Farm:").TextSize = 17
+_G.farmRunning = false
+_G.repSpeed = 350
+_G.pingControl = true
+
+_G.networkStats = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]
+
+function _G.getCurrentPing()
+    return _G.networkStats:GetValue()
+end
+
+function _G.getAdaptiveSpeed(ping)
+    if ping < 80 then
+        return 500
+    elseif ping < 150 then
+        return 300
+    elseif ping < 250 then
+        return 100
+    else
+        return 50
+    end
+end
+
+_G.StrTab:AddTextBox("Rep Speed:", function(inputText)
+    local speedValue = tonumber(inputText)
+    if speedValue then
+        _G.repSpeed = math.clamp(math.floor(speedValue), 1, 1000)
+    end
+end)
+
+_G.StrTab:AddSwitch("Controlled Speed", function(isEnabled)
+    _G.pingControl = isEnabled
+end):Set(true)
+
+function _G.startAutoRep()
+    local lastPingUpdate = time()
+    local currentPing = _G.getCurrentPing()
+    while _G.farmRunning do
+        if time() - lastPingUpdate > 0.5 then
+            currentPing = _G.getCurrentPing()
+            lastPingUpdate = time()
+        end
+        local repsToFire = _G.pingControl and _G.getAdaptiveSpeed(currentPing) or _G.repSpeed
+        local delayBetweenBatches = math.clamp(currentPing / 2500, 0.001, 0.1)
+        for repCount = 1, math.min(repsToFire, _G.repSpeed) do
+            _G.muscleEvent:FireServer("rep")
+            if repCount % 500 == 0 then
+                task.wait(0)
+            end
+        end
+        task.wait(delayBetweenBatches)
+    end
+end
+
+_G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
+    _G.farmRunning = isEnabled
+    if _G.farmRunning then
+        _G.runFastRep = true
+        task.spawn(_G.startAutoRep)
+    else 
+        _G.runFastRep = false
+    end
+end)
+
+_G.char = _G.player.Character or _G.player.CharacterAdded:wait()
+_G.hrp = _G.char:WaitForChild("HumanoidRootPart")
+
+_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift",function()
+    _G.hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
+    task.wait(0.2)
+    _G.VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    _G.VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end)
+
+_G.StrTab:AddButton("🌴 Jungle Squat",function()
+    _G.hrp.CFrame = CFrame.new(-8371.43359375, 6.79806327, 2858.88525390)
+    task.wait(0.2)
+    _G.VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.05)
+    _G.VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end)
+
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Tools Farm")
 
