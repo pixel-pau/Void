@@ -252,7 +252,7 @@ end)
 local farmTab = window:AddTab("Fast Farm")
 
 local strengthStat = leaderstats:WaitForChild("Strength")
-local durabilityStat = player:WaitForChild("Durability")
+local durabilityStat = leaderstats:WaitForChild("Durability")
 
 farmTab:AddLabel("📊 Stats:").TextSize = 17
 local stopwatchLabel = farmTab:AddLabel("0d 0h 0m 0s - Fast Rep Inactive")
@@ -470,9 +470,11 @@ farmTab:AddSwitch("Fast Rep", function(isEnabled)
         task.spawn(startAutoRep)
     else 
         runFastRep = false
-        task.cancel(startAutoRep)
     end
 end)
+
+farmTab:AddLabel("For me, 20-40 works the best").TextSize = 15
+farmTab:AddLabel("Try Around!")
 
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Tools Farm")
