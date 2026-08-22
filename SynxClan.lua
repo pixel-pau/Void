@@ -2763,100 +2763,136 @@ Misc:AddButton("🚀 FPS Booster", function()
     })
 end)
 
+local afkActive = false
+
 Misc:AddSwitch("⏳ Anti Afk", function(Value)
+    afkActive = Value
+    
+    local Player = game:GetService("Players").LocalPlayer
+    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui")
+    
     if Value then
-        _G.AntiAfkActive = true
-        
-        local vu = game:GetService("VirtualUser")
-        antiAfkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            if _G.AntiAfkActive then
-                vu:CaptureController()
-                vu:ClickButton2(Vector2.new())
-            end
-        end)
-
-        local ScreenGui = Instance.new("ScreenGui")
-        local MainFrame = Instance.new("Frame")
-        local UICorner = Instance.new("UICorner")
-        local Title = Instance.new("TextLabel")
-        local Separator = Instance.new("Frame")
-        local TimerLabel = Instance.new("TextLabel")
-        local FPSLabel = Instance.new("TextLabel")
-        local MSLabel = Instance.new("TextLabel")
-        local UIStroke = Instance.new("UIStroke")
-
-        ScreenGui.Name = "Syniox_AntiAFK"
-        ScreenGui.Parent = game:GetService("CoreGui")
-        
-        MainFrame.Parent = ScreenGui
-        MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) 
-        MainFrame.BackgroundTransparency = 0.1
-        MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
-        MainFrame.Size = UDim2.new(0, 120, 0, 125)
-        MainFrame.Active = true
-        MainFrame.Draggable = true 
-
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-
-        UIStroke.Parent = MainFrame
-        UIStroke.Color = Color3.fromRGB(150, 0, 0) 
-        UIStroke.Thickness = 1.5
-
-        Title.Parent = MainFrame
-        Title.Size = UDim2.new(1, 0, 0, 28)
-        Title.Text = "Syniox Anti-Afk" 
-        Title.TextColor3 = Color3.fromRGB(200, 0, 0)
-        Title.BackgroundTransparency = 1
-        Title.TextSize = 15
-        Title.Font = Enum.Font.SourceSansBold
-
-        Separator.Parent = MainFrame
-        Separator.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        Separator.BorderSizePixel = 0
-        Separator.Position = UDim2.new(0.1, 0, 0, 28)
-        Separator.Size = UDim2.new(0.8, 0, 0, 1)
-
-        local function SetupLabel(lbl, text, pos)
-            lbl.Parent = MainFrame
-            lbl.Position = pos
-            lbl.Size = UDim2.new(1, 0, 0, 25)
-            lbl.Text = text
-            lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-            lbl.BackgroundTransparency = 1
-            lbl.TextSize = 16
-            lbl.Font = Enum.Font.SourceSansBold
-            lbl.TextXAlignment = Enum.TextXAlignment.Center
+        if PlayerGui:FindFirstChild("Syniox_GUI") then 
+            PlayerGui.Syniox_GUI:Destroy() 
         end
 
-        SetupLabel(TimerLabel, "⏳ Time: 00:00:00", UDim2.new(0, 0, 0, 35))
-        SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
-        SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
-
-        local startTime = os.time()
-        local RunService = game:GetService("RunService")
+        local TweenService = game:GetService("TweenService")
         local Stats = game:GetService("Stats")
-        
-        task.spawn(function()
-            while _G.AntiAfkActive do
-                local diff = os.time() - startTime
-                TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
-                
-                local fps = math.floor(1 / RunService.RenderStepped:Wait())
-                FPSLabel.Text = "🚀 FPS: " .. fps
-                
-                local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-                MSLabel.Text = "📡 MS: " .. ping
-                
-                task.wait(0.5)
+        local RunService = game:GetService("RunService")
+
+        local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+        ScreenGui.Name = "Syniox_GUI"
+
+        local MainFrame = Instance.new("Frame", ScreenGui)
+        MainFrame.Size = UDim2.new(0, 190, 0, 210)
+        MainFrame.Position = UDim2.new(-0.3, 0, 0.4, 0)
+        MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        MainFrame.Active = true
+        MainFrame.Draggable = true
+        Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+        local Stroke = Instance.new("UIStroke", MainFrame)
+        Stroke.Color = Color3.fromRGB(160, 0, 0)
+        Stroke.Thickness = 2
+
+        local Title = Instance.new("TextLabel", MainFrame)
+        Title.Size = UDim2.new(1, -40, 0, 40)
+        Title.Position = UDim2.new(0, 15, 0, 0)
+        Title.Text = "SYNIOX | AFK"
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.Font = Enum.Font.GothamBold
+        Title.TextSize = 13
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+        Title.BackgroundTransparency = 1
+
+        local ToggleBtn = Instance.new("TextButton", MainFrame)
+        ToggleBtn.Size = UDim2.new(0, 25, 0, 25)
+        ToggleBtn.Position = UDim2.new(1, -35, 0, 7)
+        ToggleBtn.Text = "-"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
+
+        local StatContainer = Instance.new("Frame", MainFrame)
+        StatContainer.Size = UDim2.new(1, -20, 0, 90)
+        StatContainer.Position = UDim2.new(0, 10, 0, 40)
+        StatContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Instance.new("UICorner", StatContainer).CornerRadius = UDim.new(0, 6)
+
+        local function CreateTxt(text, pos)
+            local lbl = Instance.new("TextLabel", StatContainer)
+            lbl.Size = UDim2.new(1, 0, 0, 30)
+            lbl.Position = pos
+            lbl.Text = text
+            lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+            lbl.Font = Enum.Font.GothamSemibold
+            lbl.TextSize = 13
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.BackgroundTransparency = 1
+            return lbl
+        end
+
+        local TxtTime = CreateTxt("  ⏳ 00:00:00", UDim2.new(0,0,0,0))
+        local TxtFPS  = CreateTxt("  🚀 FPS: --", UDim2.new(0,0,0,30))
+        local TxtMS   = CreateTxt("  📡 MS: --", UDim2.new(0,0,0,60))
+
+        local BoostBtn = Instance.new("TextButton", MainFrame)
+        BoostBtn.Size = UDim2.new(0, 170, 0, 40)
+        BoostBtn.Position = UDim2.new(0.5, -85, 0, 150)
+        BoostBtn.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
+        BoostBtn.Text = "FPS BOOST"
+        BoostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        BoostBtn.Font = Enum.Font.GothamBold
+        BoostBtn.TextSize = 14
+        Instance.new("UICorner", BoostBtn).CornerRadius = UDim.new(0, 6)
+
+        local isMinimized = false
+        ToggleBtn.MouseButton1Click:Connect(function()
+            isMinimized = not isMinimized
+            local targetSize = isMinimized and UDim2.new(0, 190, 0, 40) or UDim2.new(0, 190, 0, 210)
+            
+            TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+            
+            StatContainer.Visible = not isMinimized
+            BoostBtn.Visible = not isMinimized
+            ToggleBtn.Text = isMinimized and "+" or "-"
+        end)
+
+        BoostBtn.MouseButton1Down:Connect(function()
+            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 160, 0, 38)}):Play()
+        end)
+
+        BoostBtn.MouseButton1Up:Connect(function()
+            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 170, 0, 40)}):Play()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("Decal") or v:IsA("Texture") or v:IsA("ParticleEmitter") or v:IsA("Fire") or v:IsA("Smoke") then v:Destroy() end
             end
         end)
 
+        local VirtualUser = game:GetService("VirtualUser")
+        local idledConn = Player.Idled:Connect(function() 
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new()) 
+        end)
+
+        local start = os.time()
+        task.spawn(function()
+            while afkActive do
+                task.wait(0.5)
+                if not isMinimized and MainFrame.Parent then
+                    local d = os.time() - start
+                    TxtTime.Text = string.format("  ⏳ %02d:%02d:%02d", math.floor(d/3600), math.floor((d%3600)/60), d%60)
+                    TxtFPS.Text = "  🚀 FPS: " .. math.floor(1 / RunService.RenderStepped:Wait())
+                    TxtMS.Text = "  📡 MS: " .. math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+                end
+            end
+            if idledConn then idledConn:Disconnect() end
+        end)
+
+        TweenService:Create(MainFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.02, 0, 0.4, 0)}):Play()
     else
-        _G.AntiAfkActive = false
-        if antiAfkConnection then antiAfkConnection:Disconnect() end
-        local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
-        if oldGui then oldGui:Destroy() end
+        if PlayerGui:FindFirstChild("Syniox_GUI") then
+            PlayerGui.Syniox_GUI:Destroy()
+        end
     end
 end)
 
@@ -2884,12 +2920,13 @@ Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
         task.spawn(function()
             while _G.autoFortuneWheelActive do
                 pcall(function()
-                    game:GetService("ReplicatedStorage").rEvents.openFortuneWheelRemote:InvokeServer(
-                        "openFortuneWheel", 
-                        game:GetService("ReplicatedStorage").fortuneWheelChances["Fortune Wheel"]
-                    )
+                    -- rEvents altındaki doğru remote yolu
+                    local wheelRemote = game:GetService("ReplicatedStorage").rEvents:FindFirstChild("openFortuneWheelRemote")
+                    if wheelRemote then
+                        wheelRemote:InvokeServer()
+                    end
                 end)
-                task.wait(0.5)
+                task.wait(1)
             end
         end)
     end
