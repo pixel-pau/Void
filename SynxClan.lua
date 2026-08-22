@@ -1030,34 +1030,7 @@ end, "Tp to Mk")
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-local VirtualInputManager = game:GetService("VirtualInputManager")
-
-local confirmCooldown = false
-
-playerGui.DescendantAdded:Connect(function(descendant)
-    if confirmCooldown then return end
-
-    if descendant:IsA("TextButton") and (descendant.Text:upper() == "YES" or descendant.Text:upper() == "EVET") then
-        confirmCooldown = true
-        task.wait(0.2)
-        
-        pcall(function()
-            local vim = VirtualInputManager
-            local absPos = descendant.AbsolutePosition
-            local absSize = descendant.AbsoluteSize
-            local clickX = absPos.X + (absSize.X / 2)
-            local clickY = absPos.Y + (absSize.Y / 2)
-            
-            vim:SendMouseButtonEvent(clickX, clickY, 0, true, game, 0)
-            task.wait(0.05)
-            vim:SendMouseButtonEvent(clickX, clickY, 0, false, game, 0)
-        end)
-        
-        task.wait(2)
-        confirmCooldown = false
-    end
-end)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local function eatProteinEgg()
     local character = player.Character or player.CharacterAdded:Wait()
@@ -1068,6 +1041,14 @@ local function eatProteinEgg()
         egg.Parent = character
         pcall(function()
             egg:Activate()
+        end)
+    else
+        -- Eğer çantalarda bulunamazsa oyunun remote sistemi üzerinden doğrudan yemeyi tetikle
+        pcall(function()
+            local remote = ReplicatedStorage:FindFirstChild("rEvents") and ReplicatedStorage.rEvents:FindFirstChild("proteinEggRemote") -- Veya ilgili remote adı
+            if remote then
+                remote:FireServer()
+            end
         end)
     end
 end
