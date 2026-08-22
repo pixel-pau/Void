@@ -2201,6 +2201,7 @@ local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
     selectedPet = text
 end)
 
+petDropdown:Add("Neon Guardian")
 petDropdown:Add("Blue Birdie")
 petDropdown:Add("Blue Bunny")
 petDropdown:Add("Blue Firecaster")
@@ -2211,8 +2212,8 @@ petDropdown:Add("Dark Golem")
 petDropdown:Add("Dark Legends Manticore")
 petDropdown:Add("Dark Vampy")
 petDropdown:Add("Darkstar Hunter")
-petDropdown:Add("Neon Guardian")
 petDropdown:Add("Apex OverLord")
+petDropdown:Add("Neon Guardian")
 petDropdown:Add("Eternal Strike Leviathan")
 petDropdown:Add("Frostwave Legends Penguin")
 petDropdown:Add("Gold Warrior")
@@ -2225,7 +2226,7 @@ petDropdown:Add("Lightning Strike Phantom")
 petDropdown:Add("Magic Butterfly")
 petDropdown:Add("Muscle Sensei")
 petDropdown:Add("Orange Hedgehog")
-pets:AddDropdown("Orange Pegasus")
+petDropdown:Add("Orange Pegasus")
 petDropdown:Add("Phantom Genesis Dragon")
 petDropdown:Add("Purple Dragon")
 petDropdown:Add("Purple Falcon")
@@ -2246,7 +2247,7 @@ pets:AddSwitch("Auto Open Pet", function(bool)
             while autoHatchPet and selectedPet ~= "" do
                 local petShopRemote = rEvents:FindFirstChild("cPetShopRemote") or ReplicatedStorage:FindFirstChild("cPetShopRemote")
                 
-                -- Doğru runtime klasör yolu üzerinden pet objesini alıyoruz
+                -- Doğru runtime klasör yolu
                 local runtimeFolder = ReplicatedStorage:FindFirstChild("shared") 
                     and ReplicatedStorage.shared:FindFirstChild("runtime") 
                     and ReplicatedStorage.shared.runtime:FindFirstChild("cPetShopFolder")
@@ -2263,7 +2264,6 @@ pets:AddSwitch("Auto Open Pet", function(bool)
         end)
     end
 end)
-
 
 local selectedAura = "Blue Aura"
 local auraDropdown = pets:AddDropdown("💫 Select Aura", function(text)
