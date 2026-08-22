@@ -2920,13 +2920,19 @@ Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
         task.spawn(function()
             while _G.autoFortuneWheelActive do
                 pcall(function()
-                    -- rEvents altındaki doğru remote yolu
-                    local wheelRemote = game:GetService("ReplicatedStorage").rEvents:FindFirstChild("openFortuneWheelRemote")
-                    if wheelRemote then
-                        wheelRemote:InvokeServer()
+                    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                    local wheelRemote = ReplicatedStorage.rEvents:FindFirstChild("openFortuneWheelRemote")
+                    
+                    local wheelChance = ReplicatedStorage:FindFirstChild("shared") 
+                        and ReplicatedStorage.shared:FindFirstChild("catalogs") 
+                        and ReplicatedStorage.shared.catalogs:FindFirstChild("fortuneWheelChances")
+                        and ReplicatedStorage.shared.catalogs.fortuneWheelChances:FindFirstChild("Fortune Wheel")
+                    
+                    if wheelRemote and wheelChance then
+                        wheelRemote:InvokeServer("openFortuneWheel", wheelChance)
                     end
                 end)
-                task.wait(1)
+                task.wait(0.5)
             end
         end)
     end
