@@ -2201,7 +2201,7 @@ local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
     selectedPet = text
 end)
 
-petDropdown:Add("Neon Guardian")
+
 petDropdown:Add("Blue Birdie")
 petDropdown:Add("Blue Bunny")
 petDropdown:Add("Blue Firecaster")
@@ -2211,6 +2211,8 @@ petDropdown:Add("Cybernetic Showdown Dragon")
 petDropdown:Add("Dark Golem")
 petDropdown:Add("Dark Legends Manticore")
 petDropdown:Add("Dark Vampy")
+petDropdown:Add("Neon Guardian")
+petDropdown:Add("Apex OverLord")
 petDropdown:Add("Darkstar Hunter")
 petDropdown:Add("Eternal Strike Leviathan")
 petDropdown:Add("Frostwave Legends Penguin")
