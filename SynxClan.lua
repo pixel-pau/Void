@@ -1030,7 +1030,32 @@ end, "Tp to Mk")
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Bu döngü ekranda "Evet" yazan onay butonunu bulduğu an doğrudan tıklar
+task.spawn(function()
+    while true do
+        task.wait(0.3)
+        pcall(function()
+            for _, gui in ipairs(playerGui:GetDescendants()) do
+                if gui:IsA("TextButton") or gui:IsA("TextLabel") then
+                    if gui.Text == "Evet" or gui.Text == "EVET" then
+                        local parentButton = gui.Parent
+                        if parentButton and (parentButton:IsA("TextButton") or parentButton:IsA("ImageButton")) then
+                            for _, conn in ipairs(getconnections(parentButton.MouseButton1Click)) do
+                                conn:Fire()
+                            end
+                            for _, conn in ipairs(getconnections(parentButton.Activated)) do
+                                conn:Fire()
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
 
 local function eatProteinEgg()
     local character = player.Character or player.CharacterAdded:Wait()
@@ -1041,14 +1066,6 @@ local function eatProteinEgg()
         egg.Parent = character
         pcall(function()
             egg:Activate()
-        end)
-    else
-        -- Eğer çantalarda bulunamazsa oyunun remote sistemi üzerinden doğrudan yemeyi tetikle
-        pcall(function()
-            local remote = ReplicatedStorage:FindFirstChild("rEvents") and ReplicatedStorage.rEvents:FindFirstChild("proteinEggRemote") -- Veya ilgili remote adı
-            if remote then
-                remote:FireServer()
-            end
         end)
     end
 end
@@ -1081,7 +1098,7 @@ rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
     autoEat60Enabled = state
 end)
 
-rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
+rebirths:AddSwitch("👁️‍🗨️ Hide Al Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
     for _, obj in pairs(rSto:GetChildren()) do
         if obj.Name:match("Frame$") then
