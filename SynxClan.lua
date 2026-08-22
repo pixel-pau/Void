@@ -2718,206 +2718,215 @@ createFarm(FrostFolder, "🏋️ Auto Lift", CFrame.new(-2917.62, 42.60, -211.29
 createFarm(FrostFolder, "💪 Auto Bench Press", CFrame.new(-3022.97, 41.31, -197.51), "rep")
 createFarm(FrostFolder, "🦵 Auto Squat", CFrame.new(-2720.66, 27.85, -590.72), "rep")
 
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local rEvents = ReplicatedStorage:WaitForChild("rEvents")
-local muscleEvent = rEvents:WaitForChild("muscleEvent")
-local VirtualInputManager = game:GetService("VirtualInputManager")
+_G.Players = game:GetService("Players")
+_G.player = _G.Players.LocalPlayer
+_G.ReplicatedStorage = game:GetService("ReplicatedStorage")
+_G.rEvents = _G.ReplicatedStorage:WaitForChild("rEvents")
+_G.muscleEvent = _G.rEvents:WaitForChild("muscleEvent")
+_G.VirtualInputManager = game:GetService("VirtualInputManager")
 
 local Misc = window:AddTab("Misc")
 
 Misc:AddLabel(" Better Farming:").TextSize = 17
-local running = false
-local thread = nil
-local sizeSwitch = settingsTab:AddSwitch("Set Size 1", function(bool)
-    running = bool
-    if running then
-        thread = coroutine.create(function()
-            while running do
-                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
-                wait(0.01)
+_G.running = false
+_G.thread = nil
+_G.sizeSwitch = Misc:AddSwitch("Set Size 1", function(bool)
+    _G.running = bool
+    if _G.running then
+        _G.thread = coroutine.create(function()
+            while _G.running do
+                _G.ReplicatedStorage.rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
+                task.wait(0.01)
             end
         end)
-        coroutine.resume(thread)
+        coroutine.resume(_G.thread)
     end
 end)
 
 Misc:AddButton("Anti Lag (Black Screen)", function()
-    local player = game.Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-    local lighting = game:GetService("Lighting")
-    for _, gui in pairs(playerGui:GetChildren()) do
+    _G.player = _G.player
+    _G.playerGui = _G.player:WaitForChild("PlayerGui")
+    _G.lighting = game:GetService("Lighting")
+    for _, gui in pairs(_G.playerGui:GetChildren()) do
         if gui:IsA("ScreenGui") then
             gui:Destroy()
         end
     end
-    local function darkenSky()
-        for _, v in pairs(lighting:GetChildren()) do
+    _G.darkenSky = function()
+        for _, v in pairs(_G.lighting:GetChildren()) do
             if v:IsA("Sky") then
                 v:Destroy()
             end
         end
-        local darkSky = Instance.new("Sky")
-        darkSky.Name = "DarkSky"
-        darkSky.SkyboxBk = "rbxassetid://0"
-        darkSky.SkyboxDn = "rbxassetid://0"
-        darkSky.SkyboxFt = "rbxassetid://0"
-        darkSky.SkyboxLf = "rbxassetid://0"
-        darkSky.SkyboxRt = "rbxassetid://0"
-        darkSky.SkyboxUp = "rbxassetid://0"
-        darkSky.Parent = lighting
-        lighting.Brightness = 0
-        lighting.ClockTime = 0
-        lighting.TimeOfDay = "00:00:00"
-        lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-        lighting.Ambient = Color3.new(0, 0, 0)
-        lighting.FogColor = Color3.new(0, 0, 0)
-        lighting.FogEnd = 100
+        _G.darkSky = Instance.new("Sky")
+        _G.darkSky.Name = "DarkSky"
+        _G.darkSky.SkyboxBk = "rbxassetid://0"
+        _G.darkSky.SkyboxDn = "rbxassetid://0"
+        _G.darkSky.SkyboxFt = "rbxassetid://0"
+        _G.darkSky.SkyboxLf = "rbxassetid://0"
+        _G.darkSky.SkyboxRt = "rbxassetid://0"
+        _G.darkSky.SkyboxUp = "rbxassetid://0"
+        _G.darkSky.Parent = _G.lighting
+        _G.lighting.Brightness = 0
+        _G.lighting.ClockTime = 0
+        _G.lighting.TimeOfDay = "00:00:00"
+        _G.lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+        _G.lighting.Ambient = Color3.new(0, 0, 0)
+        _G.lighting.FogColor = Color3.new(0, 0, 0)
+        _G.lighting.FogEnd = 100
         task.spawn(function()
             while true do
-                wait(5)
-                if not lighting:FindFirstChild("DarkSky") then
-                    darkSky:Clone().Parent = lighting
+                task.wait(5)
+                if not _G.lighting:FindFirstChild("DarkSky") then
+                    _G.darkSky:Clone().Parent = _G.lighting
                 end
-                lighting.Brightness = 0
-                lighting.ClockTime = 0
-                lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-                lighting.Ambient = Color3.new(0, 0, 0)
-                lighting.FogColor = Color3.new(0, 0, 0)
-                lighting.FogEnd = 100
+                _G.lighting.Brightness = 0
+                _G.lighting.ClockTime = 0
+                _G.lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+                _G.lighting.Ambient = Color3.new(0, 0, 0)
+                _G.lighting.FogColor = Color3.new(0, 0, 0)
+                _G.lighting.FogEnd = 100
             end
         end)
     end
-    local function removeParticleEffects()
+    _G.removeParticleEffects = function()
         for _, obj in pairs(workspace:GetDescendants()) do
             if obj:IsA("ParticleEmitter") then
                 obj:Destroy()
             end
         end
     end
-    local function removeLightSources()
+    _G.removeLightSources = function()
         for _, obj in pairs(workspace:GetDescendants()) do
             if obj:IsA("PointLight") or obj:IsA("SpotLight") or obj:IsA("SurfaceLight") then
                 obj:Destroy()
             end
         end
     end
-    removeParticleEffects()
-    removeLightSources()
-    darkenSky()
+    _G.removeParticleEffects()
+    _G.removeLightSources()
+    _G.darkenSky()
 end)
-local PlayerData = {
-    Backpack = player:WaitForChild("Backpack")
+
+_G.PlayerData = {
+    Backpack = _G.player:WaitForChild("Backpack")
 }
+
 Misc:AddLabel(" QoL:").TextSize = 17
-local ProteinEggLabel = settingsTab:AddLabel("Protein Eggs Owned: 0")
-ProteinEggLabel.TextSize = 14
+_G.ProteinEggLabel = Misc:AddLabel("Protein Eggs Owned: 0")
+_G.ProteinEggLabel.TextSize = 14
+
 task.spawn(function()
     while true do
-        local proteinEggCount = 0
-        local tropicalShakeCount = 0
-        if PlayerData.Backpack then
-            for _, item in ipairs(PlayerData.Backpack:GetChildren()) do
+        _G.proteinEggCount = 0
+        _G.tropicalShakeCount = 0
+        if _G.PlayerData.Backpack then
+            for _, item in ipairs(_G.PlayerData.Backpack:GetChildren()) do
                 if item.Name == "Protein Egg" then
-                    proteinEggCount = proteinEggCount + 1
+                    _G.proteinEggCount = _G.proteinEggCount + 1
                 elseif item.Name == "Tropical Shake" then
-                    tropicalShakeCount = tropicalShakeCount + 1
+                    _G.tropicalShakeCount = _G.tropicalShakeCount + 1
                 end
             end
         end
-        ProteinEggLabel.Text = "Protein Eggs: " .. proteinEggCount
+        _G.ProteinEggLabel.Text = "Protein Eggs: " .. _G.proteinEggCount
         task.wait(7.5)
     end
 end)
-local ProteinEggBoostLabel = settingsTab:AddLabel("Protein Egg Boost: 00:00")
-ProteinEggBoostLabel.TextSize = 14
-local function formatTime(seconds)
-    local m = math.floor(seconds / 60)
-    local s = seconds % 60
-    return string.format("%02d:%02d", m, s)
+
+_G.ProteinEggBoostLabel = Misc:AddLabel("Protein Egg Boost: 00:00")
+_G.ProteinEggBoostLabel.TextSize = 14
+
+_G.formatTime = function(seconds)
+    _G.m = math.floor(seconds / 60)
+    _G.s = seconds % 60
+    return string.format("%02d:%02d", _G.m, _G.s)
 end
+
 task.spawn(function()
     while true do
-        local boostTimersFolder = game.Players.LocalPlayer:FindFirstChild("boostTimersFolder")
-        if boostTimersFolder then
-            local boost = boostTimersFolder:FindFirstChild("Protein Egg")
-            if boost and boost:IsA("IntValue") then
-                local seconds = boost.Value
-                ProteinEggBoostLabel.Text = "Protein Egg Timer: " .. formatTime(seconds)
+        _G.boostTimersFolder = _G.player:FindFirstChild("boostTimersFolder")
+        if _G.boostTimersFolder then
+            _G.boost = _G.boostTimersFolder:FindFirstChild("Protein Egg")
+            if _G.boost and _G.boost:IsA("IntValue") then
+                _G.seconds = _G.boost.Value
+                _G.ProteinEggBoostLabel.Text = "Protein Egg Timer: " .. _G.formatTime(_G.seconds)
             else
-                ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
+                _G.ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
             end
         else
-            ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
+            _G.ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
         end
         task.wait(0.5)
     end
 end)
-local function useEggs()
-    local boost = game.Players.LocalPlayer.boostTimersFolder:FindFirstChild("Protein Egg")
-    if boost and boost:IsA("IntValue") then
-        local seconds = boost.Value
-        if seconds >= 5 then
+
+_G.useEggs = function()
+    _G.boost = _G.player.boostTimersFolder:FindFirstChild("Protein Egg")
+    if _G.boost and _G.boost:IsA("IntValue") then
+        _G.seconds = _G.boost.Value
+        if _G.seconds >= 5 then
             return
         end
     end
-    local tool = player.Character:FindFirstChild("Protein Egg") or player.Backpack:FindFirstChild("Protein Egg")
-    if tool then
-        muscleEvent:FireServer("proteinEgg", tool)
+    _G.tool = _G.player.Character:FindFirstChild("Protein Egg") or _G.player.Backpack:FindFirstChild("Protein Egg")
+    if _G.tool then
+        _G.muscleEvent:FireServer("proteinEgg", _G.tool)
     end
 end
-local running1 = false
+
+_G.running1 = false
 task.spawn(function()
     while true do
-        if running1 then
-            useEggs()
+        if _G.running1 then
+            _G.useEggs()
             task.wait(1800)
         else
             task.wait(1)
         end
     end
 end)
-local autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
-    running1 = state
+
+_G.autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
+    _G.running1 = state
     if state then
-        useEggs()
+        _G.useEggs()
     end
 end)
 
-local statPetDropdown = Misc:AddDropdown("Pet Equip", function(text)
-    local petsFolder = game.Players.LocalPlayer.petsFolder
-    for _, folder in pairs(petsFolder:GetChildren()) do
+_G.statPetDropdown = Misc:AddDropdown("Pet Equip", function(text)
+    _G.petsFolder = _G.player.petsFolder
+    for _, folder in pairs(_G.petsFolder:GetChildren()) do
         if folder:IsA("Folder") then
             for _, pet in pairs(folder:GetChildren()) do
-                game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                _G.ReplicatedStorage.rEvents.equipPetEvent:FireServer("unequipPet", pet)
             end
         end
     end
     task.wait(0.2)
-    local petName = text
-    local petsToEquip = {}
-    for _, pet in pairs(game.Players.LocalPlayer.petsFolder.Unique:GetChildren()) do
-        if pet.Name == petName then
-            table.insert(petsToEquip, pet)
+    _G.petName = text
+    _G.petsToEquip = {}
+    for _, pet in pairs(_G.player.petsFolder.Unique:GetChildren()) do
+        if pet.Name == _G.petName then
+            table.insert(_G.petsToEquip, pet)
         end
     end
-    for i = 1, math.min(8, #petsToEquip) do
-        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
+    for i = 1, math.min(8, #_G.petsToEquip) do
+        _G.ReplicatedStorage.rEvents.equipPetEvent:FireServer("equipPet", _G.petsToEquip[i])
         task.wait(0.1)
     end
 end)
-statPetDropdown:Add("Swift Samurai")
-statPetDropdown:Add("Tribal Overlord")
+_G.statPetDropdown:Add("Swift Samurai")
+_G.statPetDropdown:Add("Tribal Overlord")
 
-local function claimChests()
-    local lp = game:GetService("Players").LocalPlayer
-    local char = lp.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
+_G.claimChests = function()
+    _G.lp = _G.player
+    _G.char = _G.lp.Character
+    _G.root = _G.char and _G.char:FindFirstChild("HumanoidRootPart")
     
-    if root then
-        local oldCF = root.CFrame
-        local chests = {
+    if _G.root then
+        _G.oldCF = _G.root.CFrame
+        _G.chests = {
             Vector3.new(42.25, 1.5, 408.91),    
             Vector3.new(-138.43, 1.5, -276.86), 
             Vector3.new(-2569.81, 1.5, -554.07),
@@ -2927,31 +2936,31 @@ local function claimChests()
             Vector3.new(-7913.11, -1.5, 3019.15) 
         }
         
-        for _, pos in ipairs(chests) do
-            root.CFrame = CFrame.new(pos)
+        for _, pos in ipairs(_G.chests) do
+            _G.root.CFrame = CFrame.new(pos)
             task.wait(0.15) 
         end
-        root.CFrame = oldCF
+        _G.root.CFrame = _G.oldCF
     end
 end
 
 Misc:AddButton("📦 Auto Claim Chest", function()
-    claimChests()
+    _G.claimChests()
 end)
 
 Misc:AddButton("🚀 FPS Booster", function()
-    local lighting = game:GetService("Lighting")
-    local terrain = game:GetService("Workspace"):FindFirstChildOfClass('Terrain')
+    _G.lighting = game:GetService("Lighting")
+    _G.terrain = game:GetService("Workspace"):FindFirstChildOfClass('Terrain')
 
-    lighting.Brightness = 0.5
-    lighting.OutdoorAmbient = Color3.fromRGB(120, 120, 120)
-    lighting.Ambient = Color3.fromRGB(120, 120, 120)
-    lighting.ClockTime = 14
+    _G.lighting.Brightness = 0.5
+    _G.lighting.OutdoorAmbient = Color3.fromRGB(120, 120, 120)
+    _G.lighting.Ambient = Color3.fromRGB(120, 120, 120)
+    _G.lighting.ClockTime = 14
 
-    if terrain then
-        terrain.WaterWaveSize = 0
-        terrain.WaterWaveSpeed = 0
-        terrain.WaterReflectance = 0
+    if _G.terrain then
+        _G.terrain.WaterWaveSize = 0
+        _G.terrain.WaterWaveSpeed = 0
+        _G.terrain.WaterReflectance = 0
     end
     
     for _, v in pairs(game:GetDescendants()) do
@@ -2969,150 +2978,148 @@ Misc:AddButton("🚀 FPS Booster", function()
     })
 end)
 
-local afkActive = false
+_G.afkActive = false
 
 Misc:AddSwitch("⏳ Anti Afk", function(Value)
-    afkActive = Value
+    _G.afkActive = Value
     
-    local Player = game:GetService("Players").LocalPlayer
-    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui")
+    _G.Player = _G.player
+    _G.PlayerGui = _G.Player:FindFirstChildOfClass("PlayerGui")
     
     if Value then
-        if PlayerGui:FindFirstChild("Syniox_GUI") then 
-            PlayerGui.Syniox_GUI:Destroy() 
+        if _G.PlayerGui:FindFirstChild("Syniox_GUI") then 
+            _G.PlayerGui.Syniox_GUI:Destroy() 
         end
 
-        local TweenService = game:GetService("TweenService")
-        local Stats = game:GetService("Stats")
-        local RunService = game:GetService("RunService")
+        _G.TweenService = game:GetService("TweenService")
+        _G.Stats = game:GetService("Stats")
+        _G.RunService = game:GetService("RunService")
 
-        local ScreenGui = Instance.new("ScreenGui", PlayerGui)
-        ScreenGui.Name = "Syniox_GUI"
+        _G.ScreenGui = Instance.new("ScreenGui", _G.PlayerGui)
+        _G.ScreenGui.Name = "Syniox_GUI"
 
-        local MainFrame = Instance.new("Frame", ScreenGui)
-        MainFrame.Size = UDim2.new(0, 190, 0, 210)
-        MainFrame.Position = UDim2.new(-0.3, 0, 0.4, 0)
-        MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-        MainFrame.Active = true
-        MainFrame.Draggable = true
-        Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
-        local Stroke = Instance.new("UIStroke", MainFrame)
-        Stroke.Color = Color3.fromRGB(160, 0, 0)
-        Stroke.Thickness = 2
+        _G.MainFrame = Instance.new("Frame", _G.ScreenGui)
+        _G.MainFrame.Size = UDim2.new(0, 190, 0, 210)
+        _G.MainFrame.Position = UDim2.new(-0.3, 0, 0.4, 0)
+        _G.MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        _G.MainFrame.Active = true
+        _G.MainFrame.Draggable = true
+        Instance.new("UICorner", _G.MainFrame).CornerRadius = UDim.new(0, 10)
+        _G.Stroke = Instance.new("UIStroke", _G.MainFrame)
+        _G.Stroke.Color = Color3.fromRGB(160, 0, 0)
+        _G.Stroke.Thickness = 2
 
-        local Title = Instance.new("TextLabel", MainFrame)
-        Title.Size = UDim2.new(1, -40, 0, 40)
-        Title.Position = UDim2.new(0, 15, 0, 0)
-        Title.Text = "SYNIOX | AFK"
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.Font = Enum.Font.GothamBold
-        Title.TextSize = 13
-        Title.TextXAlignment = Enum.TextXAlignment.Left
-        Title.BackgroundTransparency = 1
+        _G.Title = Instance.new("TextLabel", _G.MainFrame)
+        _G.Title.Size = UDim2.new(1, -40, 0, 40)
+        _G.Title.Position = UDim2.new(0, 15, 0, 0)
+        _G.Title.Text = "SYNIOX | AFK"
+        _G.Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        _G.Title.Font = Enum.Font.GothamBold
+        _G.Title.TextSize = 13
+        _G.Title.TextXAlignment = Enum.TextXAlignment.Left
+        _G.Title.BackgroundTransparency = 1
 
-        local ToggleBtn = Instance.new("TextButton", MainFrame)
-        ToggleBtn.Size = UDim2.new(0, 25, 0, 25)
-        ToggleBtn.Position = UDim2.new(1, -35, 0, 7)
-        ToggleBtn.Text = "-"
-        ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
+        _G.ToggleBtn = Instance.new("TextButton", _G.MainFrame)
+        _G.ToggleBtn.Size = UDim2.new(0, 25, 0, 25)
+        _G.ToggleBtn.Position = UDim2.new(1, -35, 0, 7)
+        _G.ToggleBtn.Text = "-"
+        _G.ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        _G.ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", _G.ToggleBtn).CornerRadius = UDim.new(0, 6)
 
-        local StatContainer = Instance.new("Frame", MainFrame)
-        StatContainer.Size = UDim2.new(1, -20, 0, 90)
-        StatContainer.Position = UDim2.new(0, 10, 0, 40)
-        StatContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        Instance.new("UICorner", StatContainer).CornerRadius = UDim.new(0, 6)
+        _G.StatContainer = Instance.new("Frame", _G.MainFrame)
+        _G.StatContainer.Size = UDim2.new(1, -20, 0, 90)
+        _G.StatContainer.Position = UDim2.new(0, 10, 0, 40)
+        _G.StatContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Instance.new("UICorner", _G.StatContainer).CornerRadius = UDim.new(0, 6)
 
-        local function CreateTxt(text, pos)
-            local lbl = Instance.new("TextLabel", StatContainer)
-            lbl.Size = UDim2.new(1, 0, 0, 30)
-            lbl.Position = pos
-            lbl.Text = text
-            lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-            lbl.Font = Enum.Font.GothamSemibold
-            lbl.TextSize = 13
-            lbl.TextXAlignment = Enum.TextXAlignment.Left
-            lbl.BackgroundTransparency = 1
-            return lbl
+        _G.CreateTxt = function(text, pos)
+            _G.lbl = Instance.new("TextLabel", _G.StatContainer)
+            _G.lbl.Size = UDim2.new(1, 0, 0, 30)
+            _G.lbl.Position = pos
+            _G.lbl.Text = text
+            _G.lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+            _G.lbl.Font = Enum.Font.GothamSemibold
+            _G.lbl.TextSize = 13
+            _G.lbl.TextXAlignment = Enum.TextXAlignment.Left
+            _G.lbl.BackgroundTransparency = 1
+            return _G.lbl
         end
 
-        local TxtTime = CreateTxt("  ⏳ 00:00:00", UDim2.new(0,0,0,0))
-        local TxtFPS  = CreateTxt("  🚀 FPS: --", UDim2.new(0,0,0,30))
-        local TxtMS   = CreateTxt("  📡 MS: --", UDim2.new(0,0,0,60))
+        _G.TxtTime = _G.CreateTxt("  ⏳ 00:00:00", UDim2.new(0,0,0,0))
+        _G.TxtFPS  = _G.CreateTxt("  🚀 FPS: --", UDim2.new(0,0,0,30))
+        _G.TxtMS   = _G.CreateTxt("  📡 MS: --", UDim2.new(0,0,0,60))
 
-        local BoostBtn = Instance.new("TextButton", MainFrame)
-        BoostBtn.Size = UDim2.new(0, 170, 0, 40)
-        BoostBtn.Position = UDim2.new(0.5, -85, 0, 150)
-        BoostBtn.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
-        BoostBtn.Text = "FPS BOOST"
-        BoostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        BoostBtn.Font = Enum.Font.GothamBold
-        BoostBtn.TextSize = 14
-        Instance.new("UICorner", BoostBtn).CornerRadius = UDim.new(0, 6)
+        _G.BoostBtn = Instance.new("TextButton", _G.MainFrame)
+        _G.BoostBtn.Size = UDim2.new(0, 170, 0, 40)
+        _G.BoostBtn.Position = UDim2.new(0.5, -85, 0, 150)
+        _G.BoostBtn.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
+        _G.BoostBtn.Text = "FPS BOOST"
+        _G.BoostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        _G.BoostBtn.Font = Enum.Font.GothamBold
+        _G.BoostBtn.TextSize = 14
+        Instance.new("UICorner", _G.BoostBtn).CornerRadius = UDim.new(0, 6)
 
-        local isMinimized = false
-        ToggleBtn.MouseButton1Click:Connect(function()
-            isMinimized = not isMinimized
-            local targetSize = isMinimized and UDim2.new(0, 190, 0, 40) or UDim2.new(0, 190, 0, 210)
+        _G.isMinimized = false
+        _G.ToggleBtn.MouseButton1Click:Connect(function()
+            _G.isMinimized = not _G.isMinimized
+            _G.targetSize = _G.isMinimized and UDim2.new(0, 190, 0, 40) or UDim2.new(0, 190, 0, 210)
             
-            TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+            _G.TweenService:Create(_G.MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = _G.targetSize}):Play()
             
-            StatContainer.Visible = not isMinimized
-            BoostBtn.Visible = not isMinimized
-            ToggleBtn.Text = isMinimized and "+" or "-"
+            _G.StatContainer.Visible = not _G.isMinimized
+            _G.BoostBtn.Visible = not _G.isMinimized
+            _G.ToggleBtn.Text = _G.isMinimized and "+" or "-"
         end)
 
-        BoostBtn.MouseButton1Down:Connect(function()
-            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 160, 0, 38)}):Play()
+        _G.BoostBtn.MouseButton1Down:Connect(function()
+            _G.TweenService:Create(_G.BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 160, 0, 38)}):Play()
         end)
 
-        BoostBtn.MouseButton1Up:Connect(function()
-            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 170, 0, 40)}):Play()
+        _G.BoostBtn.MouseButton1Up:Connect(function()
+            _G.TweenService:Create(_G.BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 170, 0, 40)}):Play()
             for _, v in pairs(workspace:GetDescendants()) do
                 if v:IsA("Decal") or v:IsA("Texture") or v:IsA("ParticleEmitter") or v:IsA("Fire") or v:IsA("Smoke") then v:Destroy() end
             end
         end)
 
-        local VirtualUser = game:GetService("VirtualUser")
-        local idledConn = Player.Idled:Connect(function() 
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new()) 
+        _G.VirtualUser = game:GetService("VirtualUser")
+        _G.idledConn = _G.Player.Idled:Connect(function() 
+            _G.VirtualUser:CaptureController()
+            _G.VirtualUser:ClickButton2(Vector2.new()) 
         end)
 
-        local start = os.time()
+        _G.start = os.time()
         task.spawn(function()
-            while afkActive do
+            while _G.afkActive do
                 task.wait(0.5)
-                if not isMinimized and MainFrame.Parent then
-                    local d = os.time() - start
-                    TxtTime.Text = string.format("  ⏳ %02d:%02d:%02d", math.floor(d/3600), math.floor((d%3600)/60), d%60)
-                    TxtFPS.Text = "  🚀 FPS: " .. math.floor(1 / RunService.RenderStepped:Wait())
-                    TxtMS.Text = "  📡 MS: " .. math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+                if not _G.isMinimized and _G.MainFrame.Parent then
+                    _G.d = os.time() - _G.start
+                    _G.TxtTime.Text = string.format("  ⏳ %02d:%02d:%02d", math.floor(_G.d/3600), math.floor((_G.d%3600)/60), _G.d%60)
+                    _G.TxtFPS.Text = "  🚀 FPS: " .. math.floor(1 / _G.RunService.RenderStepped:Wait())
+                    _G.TxtMS.Text = "  📡 MS: " .. math.floor(_G.Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
                 end
             end
-            if idledConn then idledConn:Disconnect() end
+            if _G.idledConn then _G.idledConn:Disconnect() end
         end)
 
-        TweenService:Create(MainFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.02, 0, 0.4, 0)}):Play()
+        _G.TweenService:Create(_G.MainFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.02, 0, 0.4, 0)}):Play()
     else
-        if PlayerGui:FindFirstChild("Syniox_GUI") then
-            PlayerGui.Syniox_GUI:Destroy()
+        if _G.PlayerGui:FindFirstChild("Syniox_GUI") then
+            _G.PlayerGui.Syniox_GUI:Destroy()
         end
     end
 end)
 
-local switch = Misc:AddSwitch("🔒 Lock Position", function(Value)
+_G.switch = Misc:AddSwitch("🔒 Lock Position", function(Value)
     if Value then
-        
-        local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        _G.currentPos = _G.player.Character.HumanoidRootPart.CFrame
         getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
-            if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+            if _G.player.Character and _G.player.Character:FindFirstChild("HumanoidRootPart") then
+                _G.player.Character.HumanoidRootPart.CFrame = _G.currentPos
             end
         end)
     else
-        
         if getgenv().posLock then
             getgenv().posLock:Disconnect()
             getgenv().posLock = nil
@@ -3126,16 +3133,15 @@ Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
         task.spawn(function()
             while _G.autoFortuneWheelActive do
                 pcall(function()
-                    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                    local wheelRemote = ReplicatedStorage.rEvents:FindFirstChild("openFortuneWheelRemote")
+                    _G.wheelRemote = _G.ReplicatedStorage.rEvents:FindFirstChild("openFortuneWheelRemote")
                     
-                    local wheelChance = ReplicatedStorage:FindFirstChild("shared") 
-                        and ReplicatedStorage.shared:FindFirstChild("catalogs") 
-                        and ReplicatedStorage.shared.catalogs:FindFirstChild("fortuneWheelChances")
-                        and ReplicatedStorage.shared.catalogs.fortuneWheelChances:FindFirstChild("Fortune Wheel")
+                    _G.wheelChance = _G.ReplicatedStorage:FindFirstChild("shared") 
+                        and _G.ReplicatedStorage.shared:FindFirstChild("catalogs") 
+                        and _G.ReplicatedStorage.shared.catalogs:FindFirstChild("fortuneWheelChances")
+                        and _G.ReplicatedStorage.shared.catalogs.fortuneWheelChances:FindFirstChild("Fortune Wheel")
                     
-                    if wheelRemote and wheelChance then
-                        wheelRemote:InvokeServer("openFortuneWheel", wheelChance)
+                    if _G.wheelRemote and _G.wheelChance then
+                        _G.wheelRemote:InvokeServer("openFortuneWheel", _G.wheelChance)
                     end
                 end)
                 task.wait(0.5)
@@ -3144,15 +3150,15 @@ Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
     end
 end)
 
-local timeDropdown = Misc:AddDropdown("Change Time", function(selection)
-    local lighting = game:GetService("Lighting")
+_G.timeDropdown = Misc:AddDropdown("Change Time", function(selection)
+    _G.lighting = game:GetService("Lighting")
     
     if selection == "Night" then
-        lighting.ClockTime = 0
+        _G.lighting.ClockTime = 0
     elseif selection == "Day" then
-        lighting.ClockTime = 12
+        _G.lighting.ClockTime = 12
     elseif selection == "Midnight" then
-        lighting.ClockTime = 6
+        _G.lighting.ClockTime = 6
     end
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -3162,24 +3168,24 @@ local timeDropdown = Misc:AddDropdown("Change Time", function(selection)
     })
 end)
 
-timeDropdown:Add("Night")
-timeDropdown:Add("Day")
-timeDropdown:Add("Midnight")
+_G.timeDropdown:Add("Night")
+_G.timeDropdown:Add("Day")
+_G.timeDropdown:Add("Midnight")
 
 Misc:AddButton("💎 Gamepass AutoLift", function()
-    local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
-    local player = game:GetService("Players").LocalPlayer
-    for _, gamepass in pairs(gamepassFolder:GetChildren()) do
-        local value = Instance.new("IntValue")
-        value.Name = gamepass.Name
-        value.Value = gamepass.Value
-        value.Parent = player.ownedGamepasses
+    _G.gamepassFolder = _G.ReplicatedStorage.gamepassIds
+    _G.player = _G.player
+    for _, gamepass in pairs(_G.gamepassFolder:GetChildren()) do
+        _G.value = Instance.new("IntValue")
+        _G.value.Name = gamepass.Name
+        _G.value.Value = gamepass.Value
+        _G.value.Parent = _G.player.ownedGamepasses
     end
 end, "🔓 Unlock AutoLift Pass")
 
-local scriptFolder = Misc:AddFolder(" 📜 External Scripts")
+_G.scriptFolder = Misc:AddFolder(" 📜 External Scripts")
 
-scriptFolder:AddButton("⚡ Infinite Yield", function()
+_G.scriptFolder:AddButton("⚡ Infinite Yield", function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -3189,7 +3195,7 @@ scriptFolder:AddButton("⚡ Infinite Yield", function()
     })
 end)
 
-scriptFolder:AddButton("🕺 Emote Script", function()
+_G.scriptFolder:AddButton("🕺 Emote Script", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))()
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -3199,68 +3205,68 @@ scriptFolder:AddButton("🕺 Emote Script", function()
     })
 end)
 
-local parts = {}
-local partSize = 2048
-local totalDistance = 50000
-local startPosition = Vector3.new(-2, -9.5, -2)
-local numberOfParts = math.ceil(totalDistance / partSize)
+_G.parts = {}
+_G.partSize = 2048
+_G.totalDistance = 50000
+_G.startPosition = Vector3.new(-2, -9.5, -2)
+_G.numberOfParts = math.ceil(_G.totalDistance / _G.partSize)
 
-local function createParts()
-    for x = 0, numberOfParts - 1 do
-        for z = 0, numberOfParts - 1 do
-            local newPartSide = Instance.new("Part")
-            newPartSide.Size = Vector3.new(partSize, 1, partSize)
-            newPartSide.Position = startPosition + Vector3.new(x * partSize, 0, z * partSize)
-            newPartSide.Anchored = true
-            newPartSide.Transparency = 1
-            newPartSide.CanCollide = true
-            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
-            newPartSide.Parent = workspace
-            table.insert(parts, newPartSide)
+_G.createParts = function()
+    for x = 0, _G.numberOfParts - 1 do
+        for z = 0, _G.numberOfParts - 1 do
+            _G.newPartSide = Instance.new("Part")
+            _G.newPartSide.Size = Vector3.new(_G.partSize, 1, _G.partSize)
+            _G.newPartSide.Position = _G.startPosition + Vector3.new(x * _G.partSize, 0, z * _G.partSize)
+            _G.newPartSide.Anchored = true
+            _G.newPartSide.Transparency = 1
+            _G.newPartSide.CanCollide = true
+            _G.newPartSide.Name = "Part_Side_" .. x .. "_" .. z
+            _G.newPartSide.Parent = workspace
+            table.insert(_G.parts, _G.newPartSide)
             
-            local newPartLeftRight = Instance.new("Part")
-            newPartLeftRight.Size = Vector3.new(partSize, 1, partSize)
-            newPartLeftRight.Position = startPosition + Vector3.new(-x * partSize, 0, z * partSize)
-            newPartLeftRight.Anchored = true
-            newPartLeftRight.Transparency = 1
-            newPartLeftRight.CanCollide = true
-            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
-            newPartLeftRight.Parent = workspace
-            table.insert(parts, newPartLeftRight)
+            _G.newPartLeftRight = Instance.new("Part")
+            _G.newPartLeftRight.Size = Vector3.new(_G.partSize, 1, _G.partSize)
+            _G.newPartLeftRight.Position = _G.startPosition + Vector3.new(-x * _G.partSize, 0, z * _G.partSize)
+            _G.newPartLeftRight.Anchored = true
+            _G.newPartLeftRight.Transparency = 1
+            _G.newPartLeftRight.CanCollide = true
+            _G.newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
+            _G.newPartLeftRight.Parent = workspace
+            table.insert(_G.parts, _G.newPartLeftRight)
             
-            local newPartUpLeft = Instance.new("Part")
-            newPartUpLeft.Size = Vector3.new(partSize, 1, partSize)
-            newPartUpLeft.Position = startPosition + Vector3.new(-x * partSize, 0, -z * partSize)
-            newPartUpLeft.Anchored = true
-            newPartUpLeft.Transparency = 1
-            newPartUpLeft.CanCollide = true
-            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
-            newPartUpLeft.Parent = workspace
-            table.insert(parts, newPartUpLeft)
+            _G.newPartUpLeft = Instance.new("Part")
+            _G.newPartUpLeft.Size = Vector3.new(_G.partSize, 1, _G.partSize)
+            _G.newPartUpLeft.Position = _G.startPosition + Vector3.new(-x * _G.partSize, 0, -z * _G.partSize)
+            _G.newPartUpLeft.Anchored = true
+            _G.newPartUpLeft.Transparency = 1
+            _G.newPartUpLeft.CanCollide = true
+            _G.newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
+            _G.newPartUpLeft.Parent = workspace
+            table.insert(_G.parts, _G.newPartUpLeft)
             
-            local newPartUpRight = Instance.new("Part")
-            newPartUpRight.Size = Vector3.new(partSize, 1, partSize)
-            newPartUpRight.Position = startPosition + Vector3.new(x * partSize, 0, -z * partSize)
-            newPartUpRight.Anchored = true
-            newPartUpRight.Transparency = 1
-            newPartUpRight.CanCollide = true
-            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
-            newPartUpRight.Parent = workspace
-            table.insert(parts, newPartUpRight)
+            _G.newPartUpRight = Instance.new("Part")
+            _G.newPartUpRight.Size = Vector3.new(_G.partSize, 1, _G.partSize)
+            _G.newPartUpRight.Position = _G.startPosition + Vector3.new(x * _G.partSize, 0, -z * _G.partSize)
+            _G.newPartUpRight.Anchored = true = true
+            _G.newPartUpRight.Transparency = 1
+            _G.newPartUpRight.CanCollide = true
+            _G.newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
+            _G.newPartUpRight.Parent = workspace
+            table.insert(_G.parts, _G.newPartUpRight)
         end
     end
 end
 
-local function makePartsWalkthrough()
-    for _, part in ipairs(parts) do
+_G.makePartsWalkthrough = function()
+    for _, part in ipairs(_G.parts) do
         if part and part.Parent then
             part.CanCollide = false
         end
     end
 end
 
-local function makePartsSolid()
-    for _, part in ipairs(parts) do
+_G.makePartsSolid = function()
+    for _, part in ipairs(_G.parts) do
         if part and part.Parent then
             part.CanCollide = true
         end
@@ -3269,15 +3275,15 @@ end
 
 Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     if bool then
-        createParts()
+        _G.createParts()
     else
-        makePartsWalkthrough()
+        _G.makePartsWalkthrough()
     end
 end)
 
-local autoEatBoostsEnabled = false
+_G.autoEatBoostsEnabled = false
 
-local boostsList = {
+_G.boostsList = {
     "ULTRA Shake",
     "TOUGH Bar",
     "Protein Shake",
@@ -3286,28 +3292,28 @@ local boostsList = {
     "Energy Bar",
 }
 
-local function eatAllBoosts()
-    local player = game.Players.LocalPlayer
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
+_G.eatAllBoosts = function()
+    _G.player = _G.player
+    _G.backpack = _G.player:WaitForChild("Backpack")
+    _G.character = _G.player.Character or _G.player.CharacterAdded:Wait()
 
-    for _, boostName in ipairs(boostsList) do
-        local boost = backpack:FindFirstChild(boostName)
-        while boost do
-            boost.Parent = character
+    for _, boostName in ipairs(_G.boostsList) do
+        _G.boost = _G.backpack:FindFirstChild(boostName)
+        while _G.boost do
+            _G.boost.Parent = _G.character
             pcall(function()
-                boost:Activate()
+                _G.boost:Activate()
             end)
             task.wait(0)
-            boost = backpack:FindFirstChild(boostName)
+            _G.boost = _G.backpack:FindFirstChild(boostName)
         end
     end
 end
 
 task.spawn(function()
     while true do
-        if autoEatBoostsEnabled then
-            eatAllBoosts()
+        if _G.autoEatBoostsEnabled then
+            _G.eatAllBoosts()
             task.wait(2)
         else
             task.wait(1)
@@ -3316,114 +3322,111 @@ task.spawn(function()
 end)
 
 Misc:AddSwitch("🍴 Auto Eat All (No Egg)", function(state)
-    autoEatBoostsEnabled = state
+    _G.autoEatBoostsEnabled = state
 end)
 
 Misc:AddSwitch("⬆️ Infinite Jump", function(state)
     getgenv().InfiniteJump = state
     game:GetService("UserInputService").JumpRequest:connect(function()
         if getgenv().InfiniteJump then
-            local Humanoid = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-            if Humanoid then
-                Humanoid:ChangeState("Jumping")
+            _G.Humanoid = _G.player.Character:FindFirstChildOfClass("Humanoid")
+            if _G.Humanoid then
+                _G.Humanoid:ChangeState("Jumping")
             end
         end
     end)
 end)
 
 Misc:AddButton("🔄 Rejoin Game", function()
-    local ScreenGui = Instance.new("ScreenGui")
-    local Frame = Instance.new("Frame")
-    local TextLabel = Instance.new("TextLabel")
-    local YesButton = Instance.new("TextButton")
-    local NoButton = Instance.new("TextButton")
-    local UICorner = Instance.new("UICorner")
+    _G.ScreenGui = Instance.new("ScreenGui")
+    _G.Frame = Instance.new("Frame")
+    _G.TextLabel = Instance.new("TextLabel")
+    _G.YesButton = Instance.new("TextButton")
+    _G.NoButton = Instance.new("TextButton")
 
-    ScreenGui.Parent = game:GetService("CoreGui")
-    ScreenGui.Name = "RejoinConfirm"
+    _G.ScreenGui.Parent = game:GetService("CoreGui")
+    _G.ScreenGui.Name = "RejoinConfirm"
 
-    Frame.Name = "MainFrame"
-    Frame.Parent = ScreenGui
-    Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
-    Frame.Size = UDim2.new(0, 250, 0, 150)
-    Frame.BorderSizePixel = 0
-    Frame.Active = true
-    Frame.Draggable = true 
-    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+    _G.Frame.Name = "MainFrame"
+    _G.Frame.Parent = _G.ScreenGui
+    _G.Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    _G.Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+    _G.Frame.Size = UDim2.new(0, 250, 0, 150)
+    _G.Frame.BorderSizePixel = 0
+    _G.Frame.Active = true
+    _G.Frame.Draggable = true 
+    Instance.new("UICorner", _G.Frame).CornerRadius = UDim.new(0, 10)
 
-    TextLabel.Parent = Frame
-    TextLabel.BackgroundTransparency = 1
-    TextLabel.Position = UDim2.new(0, 10, 0, 20)
-    TextLabel.Size = UDim2.new(0, 230, 0, 50)
-    TextLabel.Font = Enum.Font.GothamBold
-    TextLabel.Text = "Are you sure you want to rejoin?"
-    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TextLabel.TextSize = 16
-    TextLabel.TextWrapped = true
+    _G.TextLabel.Parent = _G.Frame
+    _G.TextLabel.BackgroundTransparency = 1
+    _G.TextLabel.Position = UDim2.new(0, 10, 0, 20)
+    _G.TextLabel.Size = UDim2.new(0, 230, 0, 50)
+    _G.TextLabel.Font = Enum.Font.GothamBold
+    _G.TextLabel.Text = "Are you sure you want to rejoin?"
+    _G.TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _G.TextLabel.TextSize = 16
+    _G.TextLabel.TextWrapped = true
 
-    YesButton.Name = "YesButton"
-    YesButton.Parent = Frame
-    YesButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-    YesButton.Position = UDim2.new(0, 25, 0, 90)
-    YesButton.Size = UDim2.new(0, 85, 0, 35)
-    YesButton.Font = Enum.Font.GothamBold
-    YesButton.Text = "YES"
-    YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    YesButton.TextSize = 14
-    Instance.new("UICorner", YesButton).CornerRadius = UDim.new(0, 6)
+    _G.YesButton.Name = "YesButton"
+    _G.YesButton.Parent = _G.Frame
+    _G.YesButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    _G.YesButton.Position = UDim2.new(0, 25, 0, 90)
+    _G.YesButton.Size = UDim2.new(0, 85, 0, 35)
+    _G.YesButton.Font = Enum.Font.GothamBold
+    _G.YesButton.Text = "YES"
+    _G.YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _G.YesButton.TextSize = 14
+    Instance.new("UICorner", _G.YesButton).CornerRadius = UDim.new(0, 6)
 
-    NoButton.Name = "NoButton"
-    NoButton.Parent = Frame
-    NoButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-    NoButton.Position = UDim2.new(0, 140, 0, 90)
-    NoButton.Size = UDim2.new(0, 85, 0, 35)
-    NoButton.Font = Enum.Font.GothamBold
-    NoButton.Text = "NO"
-    NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NoButton.TextSize = 14
-    Instance.new("UICorner", NoButton).CornerRadius = UDim.new(0, 6)
+    _G.NoButton.Name = "NoButton"
+    _G.NoButton.Parent = _G.Frame
+    _G.NoButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    _G.NoButton.Position = UDim2.new(0, 140, 0, 90)
+    _G.NoButton.Size = UDim2.new(0, 85, 0, 35)
+    _G.NoButton.Font = Enum.Font.GothamBold
+    _G.NoButton.Text = "NO"
+    _G.NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _G.NoButton.TextSize = 14
+    Instance.new("UICorner", _G.NoButton).CornerRadius = UDim.new(0, 6)
 
-    YesButton.MouseButton1Click:Connect(function()
-        game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+    _G.YesButton.MouseButton1Click:Connect(function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, _G.player)
     end)
 
-    NoButton.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
+    _G.NoButton.MouseButton1Click:Connect(function()
+        _G.ScreenGui:Destroy()
     end)
 end)
 
 Misc:AddSwitch("🧱 Anti Knockback", function(Value)
     if Value then
-        local playerName = game.Players.LocalPlayer.Name
-        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
-        local bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyVelocity.P = 1250
-        bodyVelocity.Parent = rootPart
+        _G.playerName = _G.player.Name
+        _G.rootPart = game.Workspace:FindFirstChild(_G.playerName):FindFirstChild("HumanoidRootPart")
+        _G.bodyVelocity = Instance.new("BodyVelocity")
+        _G.bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
+        _G.bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        _G.bodyVelocity.P = 1250
+        _G.bodyVelocity.Parent = _G.rootPart
     else
-        local playerName = game.Players.LocalPlayer.Name
-        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
-        local existingVelocity = rootPart:FindFirstChild("BodyVelocity")
-        if existingVelocity and existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
-            existingVelocity:Destroy()
+        _G.playerName = _G.player.Name
+        _G.rootPart = game.Workspace:FindFirstChild(_G.playerName):FindFirstChild("HumanoidRootPart")
+        _G.existingVelocity = _G.rootPart:FindFirstChild("BodyVelocity")
+        if _G.existingVelocity and _G.existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
+            _G.existingVelocity:Destroy()
         end
     end
 end)
 
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local noclipEnabled = false
-local noclipConnection = nil
+_G.RunService = game:GetService("RunService")
+_G.noclipEnabled = false
+_G.noclipConnection = nil
 
-local function startNoclip()
-    if noclipConnection then noclipConnection:Disconnect() end
+_G.startNoclip = function()
+    if _G.noclipConnection then _G.noclipConnection:Disconnect() end
     
-    noclipConnection = RunService.Stepped:Connect(function()
-        if noclipEnabled and player.Character then
-            for _, part in pairs(player.Character:GetDescendants()) do
+    _G.noclipConnection = _G.RunService.Stepped:Connect(function()
+        if _G.noclipEnabled and _G.player.Character then
+            for _, part in pairs(_G.player.Character:GetDescendants()) do
                 if part:IsA("BasePart") then
                     part.CanCollide = false
                 end
@@ -3433,18 +3436,18 @@ local function startNoclip()
 end
 
 Misc:AddSwitch("👻 No Clip", function(bool)
-    noclipEnabled = bool
+    _G.noclipEnabled = bool
     
-    if noclipEnabled then
-        startNoclip()
+    if _G.noclipEnabled then
+        _G.startNoclip()
     else
-        if noclipConnection then
-            noclipConnection:Disconnect()
-            noclipConnection = nil
+        if _G.noclipConnection then
+            _G.noclipConnection:Disconnect()
+            _G.noclipConnection = nil
         end
         
-        if player.Character then
-            for _, part in pairs(player.Character:GetDescendants()) do
+        if _G.player.Character then
+            for _, part in pairs(_G.player.Character:GetDescendants()) do
                 if part:IsA("BasePart") then
                     part.CanCollide = true
                 end
@@ -3453,10 +3456,10 @@ Misc:AddSwitch("👻 No Clip", function(bool)
     end
 end)
 
-player.CharacterAdded:Connect(function()
-    if noclipEnabled then
+_G.player.CharacterAdded:Connect(function()
+    if _G.noclipEnabled then
         task.wait(0.1)
-        startNoclip()
+        _G.startNoclip()
     end
 end)
 
