@@ -20,8 +20,13 @@ _G.rEvents = _G.ReplicatedStorage:WaitForChild("rEvents")
 
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/Syn-Paid-Ui/refs/heads/main/SynioxGui.txt"))()
+_G.library = library 
+
 local player = game.Players.LocalPlayer
+_G.player = player 
+
 local displayName = player.DisplayName
+_G.displayName = displayName 
 
 local window = library:AddWindow("Syniox Private | Muscle Legends || HI - ".. displayName, {
     title_bar = {
@@ -40,6 +45,7 @@ local window = library:AddWindow("Syniox Private | Muscle Legends || HI - ".. di
     min_size = Vector2.new(450, 300), 
     can_resize = true 
 })
+_G.window = window
 
 local rebirthTab = window:AddTab("Fast Rebirth")
 
