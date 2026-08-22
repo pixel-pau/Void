@@ -2192,7 +2192,6 @@ end)
 local pets = window:AddTab("Pets")
 pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local rEvents = ReplicatedStorage:WaitForChild("rEvents")
 
 local selectedPet = "Neon Guardian"
 local autoHatchPet = false
@@ -2201,6 +2200,7 @@ local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
     selectedPet = text
 end)
 
+petDropdown:Add("Neon Guardian")
 petDropdown:Add("Blue Birdie")
 petDropdown:Add("Blue Bunny")
 petDropdown:Add("Blue Firecaster")
@@ -2211,10 +2211,8 @@ petDropdown:Add("Dark Golem")
 petDropdown:Add("Dark Legends Manticore")
 petDropdown:Add("Dark Vampy")
 petDropdown:Add("Darkstar Hunter")
-petDropdown:Add("Neon Guardian")
-petDropdown:Add("Apex OverLord")
 petDropdown:Add("Eternal Strike Leviathan")
-pets:AddDropdown("Frostwave Legends Penguin") -- (Not: Dropdown item ekleme formatına sadık kaldık)
+petDropdown:Add("Frostwave Legends Penguin")
 petDropdown:Add("Gold Warrior")
 petDropdown:Add("Golden Pheonix")
 petDropdown:Add("Golden Viking")
@@ -2244,9 +2242,9 @@ pets:AddSwitch("Auto Open Pet", function(bool)
     if bool then
         spawn(function()
             while autoHatchPet and selectedPet ~= "" do
-                -- Pet nesnesinin oyun içinde saklandığı olası klasörler
+                -- Logger'ın gösterdiği doğru yerler
                 local petShopFolder = ReplicatedStorage:FindFirstChild("cPetShopFolder") or ReplicatedStorage:FindFirstChild("PetShopFolder") or ReplicatedStorage:FindFirstChild("PetShop")
-                local petShopRemote = rEvents:FindFirstChild("cPetShopRemote")
+                local petShopRemote = ReplicatedStorage:FindFirstChild("cPetShopRemote")
 
                 local petToOpen = petShopFolder and petShopFolder:FindFirstChild(selectedPet)
                 
