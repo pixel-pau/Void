@@ -1031,10 +1031,16 @@ end, "Tp to Mk")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local rEvents = ReplicatedStorage:WaitForChild("rEvents")
-local muscleEvent = rEvents:WaitForChild("muscleEvent")
+
+local rEvents = ReplicatedStorage:WaitForChild("rEvents", 5)
+local muscleEvent = rEvents and rEvents:WaitForChild("muscleEvent", 5)
+
+local autoEat30Enabled = false
+local autoEat60Enabled = false
 
 local function useProteinEgg()
+    if not muscleEvent then return end
+    
     local boost = player:FindFirstChild("boostTimersFolder") and player.boostTimersFolder:FindFirstChild("Protein Egg")
     if boost and boost:IsA("IntValue") then
         if boost.Value >= 5 then
@@ -1042,7 +1048,8 @@ local function useProteinEgg()
         end
     end
     
-    local tool = player.Character:FindFirstChild("Protein Egg") or player.Backpack:FindFirstChild("Protein Egg")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local tool = character:FindFirstChild("Protein Egg") or player.Backpack:FindFirstChild("Protein Egg")
     if tool then
         muscleEvent:FireServer("proteinEgg", tool)
     end
@@ -1059,12 +1066,14 @@ task.spawn(function()
     end
 end)
 
-rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
-    autoEat30Enabled = state
-    if state then
-        useProteinEgg()
-    end
-end)
+if rebirths then
+    rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
+        autoEat30Enabled = state
+        if state then
+            useProteinEgg()
+        end
+    end)
+end
 
 task.spawn(function()
     while true do
@@ -1077,12 +1086,14 @@ task.spawn(function()
     end
 end)
 
-rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
-    autoEat60Enabled = state
-    if state then
-        useProteinEgg()
-    end
-end)
+if rebirths then
+    rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
+        autoEat60Enabled = state
+        if state then
+            useProteinEgg()
+        end
+    end)
+end
 
 rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
