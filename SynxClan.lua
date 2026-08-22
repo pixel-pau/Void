@@ -311,7 +311,6 @@ _G.projectedStrengthLabel = _G.StrTab:AddLabel("Strength: /Hour | /Day | /Week")
 _G.projectedStrengthLabel.TextSize = 15
 _G.averageStrengthLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
 _G.averageStrengthLabel.TextSize = 15
-_G.StrTab:AddLabel("")
 _G.projectedDurabilityLabel = _G.StrTab:AddLabel("Dura: /Hour | /Day | /Week")
 _G.projectedDurabilityLabel.TextSize = 15
 _G.averageDurabilityLabel = _G.StrTab:AddLabel("Average: /Hour | /Day | /Week")
