@@ -2346,56 +2346,78 @@ local selectedEvolvePet = ""
 local autoEvolvePet = false
 
 local evolvePetDropdown = pets:AddDropdown("🐾 Select Pet to Evolve", function(text)
-    selectedEvolvePet = text
+    selectedEvolvePet = text:match("^(.-)%s*%(.-%)$") or text
 end)
 
-evolvePetDropdown:Add("Blue Birdie (Basic)")
-evolvePetDropdown:Add("Orange Hedgehog (Basic)")
-evolvePetDropdown:Add("Red Kitty (Basic)")
-evolvePetDropdown:Add("Blue Bunny (Basic)")
-evolvePetDropdown:Add("Silver Dog (Basic)")
-evolvePetDropdown:Add("Dark Vampy (Advanced)")
-evolvePetDropdown:Add("Dark Golem (Advanced)")
-evolvePetDropdown:Add("Green Butterfly (Advanced)")
-evolvePetDropdown:Add("Yellow Butterfly (Advanced)")
-evolvePetDropdown:Add("Crimson Falcon (Rare)")
-evolvePetDropdown:Add("Purple Dragon (Rare)")
-evolvePetDropdown:Add("Orange Pegasus (Rare)")
-evolvePetDropdown:Add("Purple Falcon (Rare)")
-evolvePetDropdown:Add("Red Dragon (Rare)")
-evolvePetDropdown:Add("White Pegasus (Rare)")
-evolvePetDropdown:Add("Frostwave Legends Penguin (Rare)")
-evolvePetDropdown:Add("Phantom Genesis Dragon (Rare)")
-evolvePetDropdown:Add("Eternal Strike Leviathan (Rare)")
-evolvePetDropdown:Add("Blue Pheonix (Epic)")
-evolvePetDropdown:Add("Blue Firecaster (Epic)")
-evolvePetDropdown:Add("Golden Pheonix (Epic)")
-evolvePetDropdown:Add("Red Firecaster (Epic)")
-evolvePetDropdown:Add("Green Firecaster (Epic)")
-evolvePetDropdown:Add("White Pheonix (Epic)")
-evolvePetDropdown:Add("Dark Legends Manticore (Epic)")
-evolvePetDropdown:Add("Ultimate Supernova Pegasus (Epic)")
-evolvePetDropdown:Add("Lightning Strike Phantom (Epic)")
-evolvePetDropdown:Add("Golden Viking (Epic)")
-evolvePetDropdown:Add("Infernal Dragon (Unique)")
-evolvePetDropdown:Add("Ultra Birdie (Unique)")
-evolvePetDropdown:Add("Magic Butterfly (Unique)")
-evolvePetDropdown:Add("Aether Spirit Bunny (Unique)")
-evolvePetDropdown:Add("Cybernetic Showdown Dragon (Unique)")
-evolvePetDropdown:Add("Darkstar Hunter (Unique)")
-evolvePetDropdown:Add("Muscle Sensei (Unique)")
-evolvePetDropdown:Add("Neon Guardian (Unique)")
-evolvePetDropdown:Add("Blue Aura (Basic)")
-evolvePetDropdown:Add("Green Aura (Basic)")
-evolvePetDropdown:Add("Purple Aura (Basic)")
-evolvePetDropdown:Add("Red Aura (Basic)")
-evolvePetDropdown:Add("Yellow Aura (Basic)")
-evolvePetDropdown:Add("Ultra Inferno (Rare)")
-evolvePetDropdown:Add("Azure Tundra (Epic)")
-evolvePetDropdown:Add("Grand Supernova (Epic)")
-evolvePetDropdown:Add("Muscle King (Unique)")
-evolvePetDropdown:Add("Entropic Blast (Unique)")
-evolvePetDropdown:Add("Eternal Megastrike (Unique)")
+local evolveList = {
+    -- Basic
+    "Orange Hedgehog (Basic)",
+    "Silver Dog (Basic)",
+    "Red Kitty (Basic)",
+    "Blue Birdie (Basic)",
+    "Blue Bunny (Basic)",
+    "Core Pup (Basic)",
+    "Blue Aura (Basic)",
+    "Green Aura (Basic)",
+    "Purple Aura (Basic)",
+    "Red Aura (Basic)",
+    "Yellow Aura (Basic)",
+
+    -- Advanced
+    "Dark Vampy (Advanced)",
+    "Dark Golem (Advanced)",
+    "Green Butterfly (Advanced)",
+    "Yellow Butterfly (Advanced)",
+
+    -- Rare
+    "Crimson Falcon (Rare)",
+    "Purple Dragon (Rare)",
+    "Orange Pegasus (Rare)",
+    "Purple Falcon (Rare)",
+    "Red Dragon (Rare)",
+    "White Pegasus (Rare)",
+    "Frostwave Legends Penguin (Rare)",
+    "Phantom Genesis Dragon (Rare)",
+    "Eternal Strike Leviathan (Rare)",
+    "Volt Talon (Rare)",
+    "Magic Butterfly (Rare)",
+    "Blue Firecaster (Rare)",
+    "Red Firecaster (Rare)",
+    "Green Firecaster (Rare)",
+    "Ultra Inferno (Rare)",
+
+    -- Epic
+    "Blue Pheonix (Epic)",
+    "Golden Pheonix (Epic)",
+    "White Pheonix (Epic)",
+    "Dark Legends Manticore (Epic)",
+    "Ultimate Supernova Pegasus (Epic)",
+    "Lightning Strike Phantom (Epic)",
+    "Golden Viking (Epic)",
+    "Reactor Bea (Epic)",
+    "Gold Warrior (Epic)",
+    "Azure Tundra (Epic)",
+    "Grand Supernova (Epic)",
+
+    -- Unique
+    "Infernal Dragon (Unique)",
+    "Ultra Birdie (Unique)",
+    "Aether Spirit Bunny (Unique)",
+    "Cybernetic Showdown Dragon (Unique)",
+    "Darkstar Hunter (Unique)",
+    "Muscle Sensei (Unique)",
+    "Neon Guardian (Unique)",
+    "Apex Overlord (Unique)",
+    "Plasma Ravager (Unique)",
+    "Titan Reactor (Unique)",
+    "Muscle King (Unique)",
+    "Entropic Blast (Unique)",
+    "Eternal Megastrike (Unique)"
+}
+
+for _, item in ipairs(evolveList) do
+    evolvePetDropdown:Add(item)
+end
 
 pets:AddSwitch("🎯 Auto Evolve Selected Pet", function(state)
     autoEvolvePet = state
@@ -2487,18 +2509,73 @@ end
 game:GetService("Players").PlayerAdded:Connect(updatePlayerList)
 
 local petDropdown = pets:AddDropdown("🐈 Choose Pet", function(text) 
-    selectedPet = text 
+    selectedPet = text:match("^(.-)%s*%(.-%)$") or text 
 end)
 
 local petList = {
-    "Blue Birdie", "Orange Hedgehog", "Red Kitty", "Blue Bunny", "Silver Dog",
-    "Dark Vampy", "Dark Golem", "Green Butterfly", "Yellow Butterfly",
-    "Crimson Falcon", "Purple Dragon", "Orange Pegasus", "Purple Falcon", "Red Dragon",
-    "White Pegasus", "Frostwave Legends Penguin", "Phantom Genesis Dragon", "Eternal Strike Leviathan",
-    "Blue Pheonix", "Blue Firecaster", "Golden Pheonix", "Red Firecaster", "Green Firecaster",
-    "White Pheonix", "Dark Legends Manticore", "Ultimate Supernova Pegasus", "Lightning Strike Phantom", "Golden Viking",
-    "Infernal Dragon", "Ultra Birdie", "Magic Butterfly", "Aether Spirit Bunny",
-    "Cybernetic Showdown Dragon", "Darkstar Hunter", "Muscle Sensei", "Neon Guardian"
+    -- Basic
+    "Orange Hedgehog (Basic)",
+    "Silver Dog (Basic)",
+    "Red Kitty (Basic)",
+    "Blue Birdie (Basic)",
+    "Blue Bunny (Basic)",
+    "Core Pup (Basic)",
+    "Blue Aura (Basic)",
+    "Green Aura (Basic)",
+    "Purple Aura (Basic)",
+    "Red Aura (Basic)",
+    "Yellow Aura (Basic)",
+
+    -- Advanced
+    "Dark Vampy (Advanced)",
+    "Dark Golem (Advanced)",
+    "Green Butterfly (Advanced)",
+    "Yellow Butterfly (Advanced)",
+
+    -- Rare
+    "Crimson Falcon (Rare)",
+    "Purple Dragon (Rare)",
+    "Orange Pegasus (Rare)",
+    "Purple Falcon (Rare)",
+    "Red Dragon (Rare)",
+    "White Pegasus (Rare)",
+    "Frostwave Legends Penguin (Rare)",
+    "Phantom Genesis Dragon (Rare)",
+    "Eternal Strike Leviathan (Rare)",
+    "Volt Talon (Rare)",
+    "Magic Butterfly (Rare)",
+    "Blue Firecaster (Rare)",
+    "Red Firecaster (Rare)",
+    "Green Firecaster (Rare)",
+    "Ultra Inferno (Rare)",
+
+    -- Epic
+    "Blue Pheonix (Epic)",
+    "Golden Pheonix (Epic)",
+    "White Pheonix (Epic)",
+    "Dark Legends Manticore (Epic)",
+    "Ultimate Supernova Pegasus (Epic)",
+    "Lightning Strike Phantom (Epic)",
+    "Golden Viking (Epic)",
+    "Reactor Bea (Epic)",
+    "Gold Warrior (Epic)",
+    "Azure Tundra (Epic)",
+    "Grand Supernova (Epic)",
+
+    -- Unique
+    "Infernal Dragon (Unique)",
+    "Ultra Birdie (Unique)",
+    "Aether Spirit Bunny (Unique)",
+    "Cybernetic Showdown Dragon (Unique)",
+    "Darkstar Hunter (Unique)",
+    "Muscle Sensei (Unique)",
+    "Neon Guardian (Unique)",
+    "Apex Overlord (Unique)",
+    "Plasma Ravager (Unique)",
+    "Titan Reactor (Unique)",
+    "Muscle King (Unique)",
+    "Entropic Blast (Unique)",
+    "Eternal Megastrike (Unique)"
 }
 
 for _, name in ipairs(petList) do 
