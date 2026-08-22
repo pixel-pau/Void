@@ -1031,25 +1031,22 @@ end, "Tp to Mk")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Bu döngü ekranda "Evet" yazan onay butonunu bulduğu an doğrudan tıklar
 task.spawn(function()
     while true do
-        task.wait(0.3)
+        task.wait(0.2)
         pcall(function()
             for _, gui in ipairs(playerGui:GetDescendants()) do
-                if gui:IsA("TextButton") or gui:IsA("TextLabel") then
-                    if gui.Text == "Evet" or gui.Text == "EVET" then
-                        local parentButton = gui.Parent
-                        if parentButton and (parentButton:IsA("TextButton") or parentButton:IsA("ImageButton")) then
-                            for _, conn in ipairs(getconnections(parentButton.MouseButton1Click)) do
-                                conn:Fire()
-                            end
-                            for _, conn in ipairs(getconnections(parentButton.Activated)) do
-                                conn:Fire()
-                            end
-                        end
+                if gui:IsA("TextButton") and (gui.Text == "Evet" or gui.Text == "EVET") then
+                    for _, conn in ipairs(getconnections(gui.MouseButton1Click)) do
+                        conn:Fire()
+                    end
+                    for _, conn in ipairs(getconnections(gui.Activated)) do
+                        conn:Fire()
+                    end
+                    local parentFrame = gui.Parent and gui.Parent.Parent
+                    if parentFrame and parentFrame:IsA("Frame") then
+                        parentFrame.Visible = false
                     end
                 end
             end
@@ -1098,7 +1095,7 @@ rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
     autoEat60Enabled = state
 end)
 
-rebirths:AddSwitch("👁️‍🗨️ Hide Al Frames", function(bool)
+rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
     for _, obj in pairs(rSto:GetChildren()) do
         if obj.Name:match("Frame$") then
