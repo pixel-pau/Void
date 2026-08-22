@@ -2728,132 +2728,27 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local Misc = window:AddTab("Misc")
 
 Misc:AddLabel(" Better Farming:").TextSize = 17
-
 local running = false
 local thread = nil
-local sizeSwitch = Misc:AddSwitch("Set Size 1", function(bool)
+local sizeSwitch = settingsTab:AddSwitch("Set Size 1", function(bool)
     running = bool
     if running then
         thread = coroutine.create(function()
             while running do
-                ReplicatedStorage.rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
-                task.wait(0.01)
+                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
+                wait(0.01)
             end
         end)
         coroutine.resume(thread)
     end
 end)
 
-local posLocked = false
-local lockedPosition = nil
-local function lockPosition()
-    if not posLocked or not lockedPosition then return end
-    local currentCharacter = player.Character
-    if not currentCharacter then return end
-    local rootPart = currentCharacter:FindFirstChild("HumanoidRootPart")
-    if not rootPart then return end
-    local existingPosition = rootPart:FindFirstChild("PositionLocker")
-    if existingPosition then
-        existingPosition.Position = lockedPosition
-    else
-        local bodyPosition = Instance.new("BodyPosition")
-        bodyPosition.Name = "PositionLocker"
-        bodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        bodyPosition.Position = lockedPosition
-        bodyPosition.P = 100000
-        bodyPosition.Parent = rootPart
-    end
-end
-
-local function unlockPosition()
-    local currentCharacter = player.Character
-    if currentCharacter then
-        local rootPart = currentCharacter:FindFirstChild("HumanoidRootPart")
-        if rootPart then
-            local existingPosition = rootPart:FindFirstChild("PositionLocker")
-            if existingPosition then
-                existingPosition:Destroy()
-            end
-        end
-    end
-    lockedPosition = nil
-end
-
-local lockPositionSwitch = Misc:AddSwitch("Lock Position", function(bool)
-    posLocked = bool
-    if bool then
-        local currentRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-        if currentRootPart then
-            lockedPosition = currentRootPart.Position
-        end
-        lockPosition()
-    else
-        unlockPosition()
-    end
-end)
-
-player.CharacterAdded:Connect(function(newCharacter)
-    local rootPart = newCharacter:WaitForChild("HumanoidRootPart", 5)
-    if posLocked and rootPart then
-        lockedPosition = rootPart.Position
-        lockPosition()
-    end
-end)
-
-task.spawn(function()
-    while true do
-        if posLocked then
-            lockPosition()
-        end
-        task.wait(0.1)
-    end
-end)
-
-local blockedFrames = {
-    "strengthFrame",
-    "durabilityFrame",
-    "agilityFrame",
-    "evilKarmaFrame",
-    "goodKarmaFrame",
-}
-
-local frameSwitch = Misc:AddSwitch("Hide Stat Frames", function(bool)
-    if bool then
-        for _, name in ipairs(blockedFrames) do
-            local frame = ReplicatedStorage:FindFirstChild(name)
-            if frame and frame:IsA("GuiObject") then
-                frame.Visible = false
-            end
-        end
-        if not _G.frameMonitorConnection then
-            _G.frameMonitorConnection = ReplicatedStorage.ChildAdded:Connect(function(child)
-                for _, name in ipairs(blockedFrames) do
-                    if child.Name == name and child:IsA("GuiObject") then
-                        child.Visible = false
-                    end
-                end
-            end)
-        end
-    else
-        for _, name in ipairs(blockedFrames) do
-            local frame = ReplicatedStorage:FindFirstChild(name)
-            if frame and frame:IsA("GuiObject") then
-                frame.Visible = true
-            end
-        end
-        if _G.frameMonitorConnection then
-            _G.frameMonitorConnection:Disconnect()
-            _G.frameMonitorConnection = nil
-        end
-    end
-end)
-frameSwitch:Set(false)
-
-Misc:AddButton("Anti Lag", function()
+Misc:AddButton("Anti Lag (Black Screen)", function()
+    local player = game.Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
     local lighting = game:GetService("Lighting")
     for _, gui in pairs(playerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui.Name ~= "Syniox_GUI" then
+        if gui:IsA("ScreenGui") then
             gui:Destroy()
         end
     end
@@ -2881,7 +2776,7 @@ Misc:AddButton("Anti Lag", function()
         lighting.FogEnd = 100
         task.spawn(function()
             while true do
-                task.wait(5)
+                wait(5)
                 if not lighting:FindFirstChild("DarkSky") then
                     darkSky:Clone().Parent = lighting
                 end
@@ -2912,16 +2807,12 @@ Misc:AddButton("Anti Lag", function()
     removeLightSources()
     darkenSky()
 end)
-
 local PlayerData = {
     Backpack = player:WaitForChild("Backpack")
 }
-
 Misc:AddLabel(" QoL:").TextSize = 17
-
-local ProteinEggLabel = Misc:AddLabel("Protein Eggs Owned: 0")
+local ProteinEggLabel = settingsTab:AddLabel("Protein Eggs Owned: 0")
 ProteinEggLabel.TextSize = 14
-
 task.spawn(function()
     while true do
         local proteinEggCount = 0
@@ -2939,19 +2830,16 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
-
-local ProteinEggBoostLabel = Misc:AddLabel("Protein Egg Boost: 00:00")
+local ProteinEggBoostLabel = settingsTab:AddLabel("Protein Egg Boost: 00:00")
 ProteinEggBoostLabel.TextSize = 14
-
 local function formatTime(seconds)
     local m = math.floor(seconds / 60)
     local s = seconds % 60
     return string.format("%02d:%02d", m, s)
 end
-
 task.spawn(function()
     while true do
-        local boostTimersFolder = player:FindFirstChild("boostTimersFolder")
+        local boostTimersFolder = game.Players.LocalPlayer:FindFirstChild("boostTimersFolder")
         if boostTimersFolder then
             local boost = boostTimersFolder:FindFirstChild("Protein Egg")
             if boost and boost:IsA("IntValue") then
@@ -2966,9 +2854,8 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
-
 local function useEggs()
-    local boost = player.boostTimersFolder:FindFirstChild("Protein Egg")
+    local boost = game.Players.LocalPlayer.boostTimersFolder:FindFirstChild("Protein Egg")
     if boost and boost:IsA("IntValue") then
         local seconds = boost.Value
         if seconds >= 5 then
@@ -2980,7 +2867,6 @@ local function useEggs()
         muscleEvent:FireServer("proteinEgg", tool)
     end
 end
-
 local running1 = false
 task.spawn(function()
     while true do
@@ -2992,7 +2878,6 @@ task.spawn(function()
         end
     end
 end)
-
 local autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
     running1 = state
     if state then
@@ -3000,94 +2885,36 @@ local autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
     end
 end)
 
-local function useShakes()
-    local tool = player.Character:FindFirstChild("Tropical Shake") or player.Backpack:FindFirstChild("Tropical Shake")
-    if tool then
-        muscleEvent:FireServer("tropicalShake", tool)
-    end
-end
-
-local running2 = false
-task.spawn(function()
-    while true do
-        if running2 then
-            useShakes()
-            task.wait(450)
-        else
-            task.wait(1)
-        end
-    end
-end)
-
-local autoShakeSwitch = Misc:AddSwitch("Auto Shake", function(state)
-    running2 = state
-    if state then
-        useShakes()
-    end
-end)
-
-Misc:AddSwitch("Spin Fortune Wheel", function(bool)
-    _G.AutoSpinWheel = bool
-    if bool  then
-        task.spawn(function()
-            while _G.AutoSpinWheel do
-                pcall(function()
-                    rEvents.openFortuneWheelRemote:InvokeServer("openFortuneWheel", ReplicatedStorage.fortuneWheelChances["Fortune Wheel"])
-                end)
-                task.wait(1)
-            end
-        end)
-    end
-end)
-
-local statPetDropdown = Misc:AddDropdown("Perk Pet Equip", function(text)
-    local petsFolder = player.petsFolder
+local statPetDropdown = Misc:AddDropdown("Pet Equip", function(text)
+    local petsFolder = game.Players.LocalPlayer.petsFolder
     for _, folder in pairs(petsFolder:GetChildren()) do
         if folder:IsA("Folder") then
             for _, pet in pairs(folder:GetChildren()) do
-                rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("unequipPet", pet)
             end
         end
     end
     task.wait(0.2)
     local petName = text
     local petsToEquip = {}
-    for _, pet in pairs(player.petsFolder.Unique:GetChildren()) do
+    for _, pet in pairs(game.Players.LocalPlayer.petsFolder.Unique:GetChildren()) do
         if pet.Name == petName then
             table.insert(petsToEquip, pet)
         end
     end
     for i = 1, math.min(8, #petsToEquip) do
-        rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
+        game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
         task.wait(0.1)
     end
 end)
 statPetDropdown:Add("Swift Samurai")
 statPetDropdown:Add("Tribal Overlord")
 
-Misc:AddButton("Jungle Lift", function()
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = CFrame.new(-8642.396484375, 6.7980651855, 2086.1030273)
-    task.wait(0.2)
-    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
-    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-end)
-
-Misc:AddButton("Jungle Squat", function()
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = CFrame.new(-8371.43359375, 6.79806327, 2858.88525390)
-    task.wait(0.2)
-    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
-    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-end)
-
-Misc:AddButton("📦 Auto Claim Chest", function()
-    local char = player.Character
+local function claimChests()
+    local lp = game:GetService("Players").LocalPlayer
+    local char = lp.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
+    
     if root then
         local oldCF = root.CFrame
         local chests = {
@@ -3099,17 +2926,22 @@ Misc:AddButton("📦 Auto Claim Chest", function()
             Vector3.new(4666.53, 995.0, -3692.08),
             Vector3.new(-7913.11, -1.5, 3019.15) 
         }
+        
         for _, pos in ipairs(chests) do
             root.CFrame = CFrame.new(pos)
             task.wait(0.15) 
         end
         root.CFrame = oldCF
     end
+end
+
+Misc:AddButton("📦 Auto Claim Chest", function()
+    claimChests()
 end)
 
 Misc:AddButton("🚀 FPS Booster", function()
     local lighting = game:GetService("Lighting")
-    local terrain = workspace:FindFirstChildOfClass('Terrain')
+    local terrain = game:GetService("Workspace"):FindFirstChildOfClass('Terrain')
 
     lighting.Brightness = 0.5
     lighting.OutdoorAmbient = Color3.fromRGB(120, 120, 120)
@@ -3137,20 +2969,24 @@ Misc:AddButton("🚀 FPS Booster", function()
     })
 end)
 
+local afkActive = false
+
 Misc:AddSwitch("⏳ Anti Afk", function(Value)
     afkActive = Value
-    local playerGui = player:FindFirstChildOfClass("PlayerGui")
+    
+    local Player = game:GetService("Players").LocalPlayer
+    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui")
     
     if Value then
-        if playerGui:FindFirstChild("Syniox_GUI") then 
-            playerGui.Syniox_GUI:Destroy() 
+        if PlayerGui:FindFirstChild("Syniox_GUI") then 
+            PlayerGui.Syniox_GUI:Destroy() 
         end
 
         local TweenService = game:GetService("TweenService")
         local Stats = game:GetService("Stats")
         local RunService = game:GetService("RunService")
 
-        local ScreenGui = Instance.new("ScreenGui", playerGui)
+        local ScreenGui = Instance.new("ScreenGui", PlayerGui)
         ScreenGui.Name = "Syniox_GUI"
 
         local MainFrame = Instance.new("Frame", ScreenGui)
@@ -3219,7 +3055,9 @@ Misc:AddSwitch("⏳ Anti Afk", function(Value)
         ToggleBtn.MouseButton1Click:Connect(function()
             isMinimized = not isMinimized
             local targetSize = isMinimized and UDim2.new(0, 190, 0, 40) or UDim2.new(0, 190, 0, 210)
+            
             TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+            
             StatContainer.Visible = not isMinimized
             BoostBtn.Visible = not isMinimized
             ToggleBtn.Text = isMinimized and "+" or "-"
@@ -3237,7 +3075,7 @@ Misc:AddSwitch("⏳ Anti Afk", function(Value)
         end)
 
         local VirtualUser = game:GetService("VirtualUser")
-        local idledConn = player.Idled:Connect(function() 
+        local idledConn = Player.Idled:Connect(function() 
             VirtualUser:CaptureController()
             VirtualUser:ClickButton2(Vector2.new()) 
         end)
@@ -3258,14 +3096,57 @@ Misc:AddSwitch("⏳ Anti Afk", function(Value)
 
         TweenService:Create(MainFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.02, 0, 0.4, 0)}):Play()
     else
-        if playerGui:FindFirstChild("Syniox_GUI") then
-            playerGui.Syniox_GUI:Destroy()
+        if PlayerGui:FindFirstChild("Syniox_GUI") then
+            PlayerGui.Syniox_GUI:Destroy()
         end
+    end
+end)
+
+local switch = Misc:AddSwitch("🔒 Lock Position", function(Value)
+    if Value then
+        
+        local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+            if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+            end
+        end)
+    else
+        
+        if getgenv().posLock then
+            getgenv().posLock:Disconnect()
+            getgenv().posLock = nil
+        end
+    end
+end)
+
+Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
+    _G.autoFortuneWheelActive = Value
+    if Value then
+        task.spawn(function()
+            while _G.autoFortuneWheelActive do
+                pcall(function()
+                    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                    local wheelRemote = ReplicatedStorage.rEvents:FindFirstChild("openFortuneWheelRemote")
+                    
+                    local wheelChance = ReplicatedStorage:FindFirstChild("shared") 
+                        and ReplicatedStorage.shared:FindFirstChild("catalogs") 
+                        and ReplicatedStorage.shared.catalogs:FindFirstChild("fortuneWheelChances")
+                        and ReplicatedStorage.shared.catalogs.fortuneWheelChances:FindFirstChild("Fortune Wheel")
+                    
+                    if wheelRemote and wheelChance then
+                        wheelRemote:InvokeServer("openFortuneWheel", wheelChance)
+                    end
+                end)
+                task.wait(0.5)
+            end
+        end)
     end
 end)
 
 local timeDropdown = Misc:AddDropdown("Change Time", function(selection)
     local lighting = game:GetService("Lighting")
+    
     if selection == "Night" then
         lighting.ClockTime = 0
     elseif selection == "Day" then
@@ -3273,29 +3154,49 @@ local timeDropdown = Misc:AddDropdown("Change Time", function(selection)
     elseif selection == "Midnight" then
         lighting.ClockTime = 6
     end
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Changed Time",
+        Text = "the time has been changed: " .. selection,
+        Duration = 0
+    })
 end)
+
 timeDropdown:Add("Night")
 timeDropdown:Add("Day")
 timeDropdown:Add("Midnight")
 
 Misc:AddButton("💎 Gamepass AutoLift", function()
-    local gamepassFolder = ReplicatedStorage.gamepassIds
+    local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
+    local player = game:GetService("Players").LocalPlayer
     for _, gamepass in pairs(gamepassFolder:GetChildren()) do
         local value = Instance.new("IntValue")
         value.Name = gamepass.Name
         value.Value = gamepass.Value
         value.Parent = player.ownedGamepasses
     end
-end)
+end, "🔓 Unlock AutoLift Pass")
 
 local scriptFolder = Misc:AddFolder(" 📜 External Scripts")
 
 scriptFolder:AddButton("⚡ Infinite Yield", function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub",
+        Text = "Infinite Yield Loaded!",
+        Duration = 3
+    })
 end)
 
 scriptFolder:AddButton("🕺 Emote Script", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))()
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub V2",
+        Text = "Emote Script Activated!",
+        Duration = 5
+    })
 end)
 
 local parts = {}
@@ -3313,6 +3214,7 @@ local function createParts()
             newPartSide.Anchored = true
             newPartSide.Transparency = 1
             newPartSide.CanCollide = true
+            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
             newPartSide.Parent = workspace
             table.insert(parts, newPartSide)
             
@@ -3322,6 +3224,7 @@ local function createParts()
             newPartLeftRight.Anchored = true
             newPartLeftRight.Transparency = 1
             newPartLeftRight.CanCollide = true
+            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
             newPartLeftRight.Parent = workspace
             table.insert(parts, newPartLeftRight)
             
@@ -3331,6 +3234,7 @@ local function createParts()
             newPartUpLeft.Anchored = true
             newPartUpLeft.Transparency = 1
             newPartUpLeft.CanCollide = true
+            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
             newPartUpLeft.Parent = workspace
             table.insert(parts, newPartUpLeft)
             
@@ -3340,6 +3244,7 @@ local function createParts()
             newPartUpRight.Anchored = true
             newPartUpRight.Transparency = 1
             newPartUpRight.CanCollide = true
+            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
             newPartUpRight.Parent = workspace
             table.insert(parts, newPartUpRight)
         end
@@ -3354,6 +3259,14 @@ local function makePartsWalkthrough()
     end
 end
 
+local function makePartsSolid()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+end
+
 Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     if bool then
         createParts()
@@ -3363,6 +3276,7 @@ Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
 end)
 
 local autoEatBoostsEnabled = false
+
 local boostsList = {
     "ULTRA Shake",
     "TOUGH Bar",
@@ -3373,8 +3287,10 @@ local boostsList = {
 }
 
 local function eatAllBoosts()
+    local player = game.Players.LocalPlayer
     local backpack = player:WaitForChild("Backpack")
     local character = player.Character or player.CharacterAdded:Wait()
+
     for _, boostName in ipairs(boostsList) do
         local boost = backpack:FindFirstChild(boostName)
         while boost do
@@ -3405,9 +3321,9 @@ end)
 
 Misc:AddSwitch("⬆️ Infinite Jump", function(state)
     getgenv().InfiniteJump = state
-    game:GetService("UserInputService").JumpRequest:Connect(function()
+    game:GetService("UserInputService").JumpRequest:connect(function()
         if getgenv().InfiniteJump then
-            local Humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            local Humanoid = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if Humanoid then
                 Humanoid:ChangeState("Jumping")
             end
@@ -3416,37 +3332,95 @@ Misc:AddSwitch("⬆️ Infinite Jump", function(state)
 end)
 
 Misc:AddButton("🔄 Rejoin Game", function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
+    local ScreenGui = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local TextLabel = Instance.new("TextLabel")
+    local YesButton = Instance.new("TextButton")
+    local NoButton = Instance.new("TextButton")
+    local UICorner = Instance.new("UICorner")
+
+    ScreenGui.Parent = game:GetService("CoreGui")
+    ScreenGui.Name = "RejoinConfirm"
+
+    Frame.Name = "MainFrame"
+    Frame.Parent = ScreenGui
+    Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+    Frame.Size = UDim2.new(0, 250, 0, 150)
+    Frame.BorderSizePixel = 0
+    Frame.Active = true
+    Frame.Draggable = true 
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+    TextLabel.Parent = Frame
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Position = UDim2.new(0, 10, 0, 20)
+    TextLabel.Size = UDim2.new(0, 230, 0, 50)
+    TextLabel.Font = Enum.Font.GothamBold
+    TextLabel.Text = "Are you sure you want to rejoin?"
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextSize = 16
+    TextLabel.TextWrapped = true
+
+    YesButton.Name = "YesButton"
+    YesButton.Parent = Frame
+    YesButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    YesButton.Position = UDim2.new(0, 25, 0, 90)
+    YesButton.Size = UDim2.new(0, 85, 0, 35)
+    YesButton.Font = Enum.Font.GothamBold
+    YesButton.Text = "YES"
+    YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    YesButton.TextSize = 14
+    Instance.new("UICorner", YesButton).CornerRadius = UDim.new(0, 6)
+
+    NoButton.Name = "NoButton"
+    NoButton.Parent = Frame
+    NoButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    NoButton.Position = UDim2.new(0, 140, 0, 90)
+    NoButton.Size = UDim2.new(0, 85, 0, 35)
+    NoButton.Font = Enum.Font.GothamBold
+    NoButton.Text = "NO"
+    NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NoButton.TextSize = 14
+    Instance.new("UICorner", NoButton).CornerRadius = UDim.new(0, 6)
+
+    YesButton.MouseButton1Click:Connect(function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+    end)
+
+    NoButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
 end)
 
 Misc:AddSwitch("🧱 Anti Knockback", function(Value)
     if Value then
-        local rootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-        if rootPart then
-            local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.Name = "AntiKnockbackVelocity"
-            bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
-            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            bodyVelocity.P = 1250
-            bodyVelocity.Parent = rootPart
-        end
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        bodyVelocity.P = 1250
+        bodyVelocity.Parent = rootPart
     else
-        local rootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-        if rootPart then
-            local existingVelocity = rootPart:FindFirstChild("AntiKnockbackVelocity")
-            if existingVelocity then
-                existingVelocity:Destroy()
-            end
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local existingVelocity = rootPart:FindFirstChild("BodyVelocity")
+        if existingVelocity and existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
+            existingVelocity:Destroy()
         end
     end
 end)
 
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 local noclipEnabled = false
 local noclipConnection = nil
 
 local function startNoclip()
     if noclipConnection then noclipConnection:Disconnect() end
+    
     noclipConnection = RunService.Stepped:Connect(function()
         if noclipEnabled and player.Character then
             for _, part in pairs(player.Character:GetDescendants()) do
@@ -3460,6 +3434,7 @@ end
 
 Misc:AddSwitch("👻 No Clip", function(bool)
     noclipEnabled = bool
+    
     if noclipEnabled then
         startNoclip()
     else
@@ -3467,6 +3442,7 @@ Misc:AddSwitch("👻 No Clip", function(bool)
             noclipConnection:Disconnect()
             noclipConnection = nil
         end
+        
         if player.Character then
             for _, part in pairs(player.Character:GetDescendants()) do
                 if part:IsA("BasePart") then
