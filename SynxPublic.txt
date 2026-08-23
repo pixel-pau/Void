@@ -153,7 +153,7 @@ for _, loc in ipairs(Locations) do
 end
 
 AutoFarm:AddLabel("----------------------------")
-AutoFarm:AddLabel("🌴 Jungle Gym Farm")
+AutoFarm:AddLabel("🕹️ Industrial Gym Farm")
 
 local VIM = game:GetService("VirtualInputManager")
 
@@ -189,10 +189,10 @@ local function startJungleFarm(toggleName, cframeValue, eventName)
     end)
 end
 
-startJungleFarm("🌴 Auto Jungle Lift", CFrame.new(-8652.85, 45.22, 2088.99), "rep")
-startJungleFarm("🏋️ Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40), "rep")
-startJungleFarm("🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
-startJungleFarm("💢 Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
+startJungleFarm("⚙️ Auto Industrial Bar Lift", CFrame.new(-5492.24, 81.82, 4644.04), "rep")
+startJungleFarm("🏋️ Auto Industrial Bench", CFrame.new(-5014.39, 111.46, 4462.90), "rep")
+startJungleFarm("🦵 Auto Industrial Squat", CFrame.new(-5216.36, 90.17, 5420.08), "rep")
+startJungleFarm("💢 Auto Industrial Boulder", CFrame.new(-5452.94, 84.47, 5232.03), "rep")
 
 AutoFarm:AddLabel("----------------------------")
 AutoFarm:AddLabel("⚡ OP Tools")
@@ -476,45 +476,6 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
-local function eatProteinEgg()
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
-    local egg = backpack:FindFirstChild("Protein Egg")
-    if egg then
-        egg.Parent = character
-        pcall(function()
-            egg:Activate()
-        end)
-    end
-end
-
-task.spawn(function()
-    while true do
-        if autoEat30Enabled then
-            eatProteinEgg()
-            task.wait(1800) 
-        end
-        task.wait(1)
-    end
-end)
-
-rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
-    autoEat30Enabled = state
-end)
-
-task.spawn(function()
-    while true do
-        if autoEat60Enabled then
-            eatProteinEgg()
-            task.wait(3600) 
-        end
-        task.wait(1)
-    end
-end)
-
-rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
-    autoEat60Enabled = state
-end)
 
 rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
@@ -1496,6 +1457,30 @@ Rock:AddSwitch("🌴 Jungle Rock 10M", function(Value)
     end)
 end)
 
+Rock:AddSwitch("⚙️ Industrial Jungle Rock 25M", function(Value)
+    selectrock = "Industrial Jungle Rock"
+    getgenv().autoFarm = Value
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait(0.01)
+            if not getgenv().autoFarm then break end
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 25000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 25000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        for _ = 1, 3 do
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        end
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
 Rock:AddLabel("👊 Auto Rock V2 (Teleport)")
 
 local FaceDirections = {
@@ -1772,12 +1757,12 @@ tabFarming:AddSwitch("💢 Auto Strength Farm", function(bool)
     end)
 end)
 
-tabFarming:AddButton("🏋️‍♂️ Jungle Lift", function()
+tabFarming:AddButton("⚙️ Industrial Bar Lift", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        character.HumanoidRootPart.CFrame = CFrame.new(-5492.24, 81.82, 4644.04)
         task.wait(0.5)
-        local machine = findMachine("Jungle Bar Lift")
+        local machine = findMachine("Industrial Bar Lift")
         if machine and machine:FindFirstChild("interactSeat") then
             local retryCount = 0
             repeat
@@ -1789,12 +1774,12 @@ tabFarming:AddButton("🏋️‍♂️ Jungle Lift", function()
     end
 end)
 
-tabFarming:AddButton("🦵 Jungle Squat", function()
+tabFarming:AddButton("🦵 Industrial Squat", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
+        character.HumanoidRootPart.CFrame = CFrame.new(-5216.36, 90.17, 5420.08)
         task.wait(0.5)
-        local machine = findMachine("Jungle Squat Rack") or findMachine("Squat Rack")
+        local machine = findMachine("Industrial Squat")
         if machine and machine:FindFirstChild("interactSeat") then
             local retryCount = 0
             repeat
@@ -1807,22 +1792,6 @@ tabFarming:AddButton("🦵 Jungle Squat", function()
 end)
 
 tabFarming:AddLabel("Useful Features").TextSize = 23
-
-tabFarming:AddSwitch("🥚 Auto Eat Egg (30 Min)", function(state)
-    autoEatEnabled = state
-    if state then
-        task.spawn(function()
-            while autoEatEnabled do
-                local egg = player.Backpack:FindFirstChild("Protein Egg")
-                if egg then
-                    egg.Parent = player.Character
-                    pcall(function() egg:Activate() end)
-                end
-                task.wait(1800)
-            end
-        end)
-    end
-end)
 
 tabFarming:AddSwitch("📌 Lock Position", function(state)
     if state then
@@ -1863,57 +1832,81 @@ end)
 local pets = window:AddTab("Pets")
 pets:AddLabel("💰 Auto Buy")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local rEvents = ReplicatedStorage:WaitForChild("rEvents")
 
-local selectedPet = "Neon Guardian"
+local selectedPet = "Orange Hedgehog"
+local autoHatchPet = false
+
 local petDropdown = pets:AddDropdown("🐢 Select Pet", function(text)
-    selectedPet = text
+    selectedPet = text:match("^(.-)%s*%(.-%)$") or text
 end)
 
-petDropdown:Add("Neon Guardian")
-petDropdown:Add("Blue Birdie")
-petDropdown:Add("Blue Bunny")
-petDropdown:Add("Blue Firecaster")
-petDropdown:Add("Blue Pheonix")
-petDropdown:Add("Crimson Falcon")
-petDropdown:Add("Cybernetic Showdown Dragon")
-petDropdown:Add("Dark Golem")
-petDropdown:Add("Dark Legends Manticore")
-petDropdown:Add("Dark Vampy")
-petDropdown:Add("Darkstar Hunter")
-petDropdown:Add("Eternal Strike Leviathan")
-petDropdown:Add("Frostwave Legends Penguin")
-petDropdown:Add("Gold Warrior")
-petDropdown:Add("Golden Pheonix")
-petDropdown:Add("Golden Viking")
-petDropdown:Add("Green Butterfly")
-petDropdown:Add("Green Firecaster")
-petDropdown:Add("Infernal Dragon")
-petDropdown:Add("Lightning Strike Phantom")
-petDropdown:Add("Magic Butterfly")
-petDropdown:Add("Muscle Sensei")
-petDropdown:Add("Orange Hedgehog")
-petDropdown:Add("Orange Pegasus")
-petDropdown:Add("Phantom Genesis Dragon")
-petDropdown:Add("Purple Dragon")
-petDropdown:Add("Purple Falcon")
-petDropdown:Add("Red Dragon")
-petDropdown:Add("Red Firecaster")
-petDropdown:Add("Red Kitty")
-petDropdown:Add("Silver Dog")
-petDropdown:Add("Ultimate Supernova Pegasus")
-petDropdown:Add("Ultra Birdie")
-petDropdown:Add("White Pegasus")
-petDropdown:Add("White Pheonix")
-petDropdown:Add("Yellow Butterfly")
+local petList = {
+    "Orange Hedgehog (Basic)",
+    "Silver Dog (Basic)",
+    "Red Kitty (Basic)",
+    "Blue Birdie (Basic)",
+    "Blue Bunny (Basic)",
+    "Core Pup (Basic)",
+    "Green Butterfly (Rare)",
+    "Yellow Butterfly (Rare)",
+    "Magic Butterfly (Rare)",
+    "Volt Talon (Rare)",
+    "Red Dragon (Epic)",
+    "Purple Dragon (Epic)",
+    "Blue Firecaster (Epic)",
+    "Red Firecaster (Epic)",
+    "Green Firecaster (Epic)",
+    "Reactor Bea (Epic)",
+    "Golden Viking (Legendary)",
+    "Gold Warrior (Legendary)",
+    "Infernal Dragon (Legendary)",
+    "Dark Golem (Legendary)",
+    "Muscle Sensei (Legendary)",
+    "Plasma Ravager (Legendary)",
+    "Orange Pegasus (Unique)",
+    "White Pegasus (Unique)",
+    "Blue Pheonix (Unique)",
+    "Golden Pheonix (Unique)",
+    "White Pheonix (Unique)",
+    "Crimson Falcon (Unique)",
+    "Purple Falcon (Unique)",
+    "Ultra Birdie (Unique)",
+    "Dark Vampy (Unique)",
+    "Frostwave Legends Penguin (Unique)",
+    "Dark Legends Manticore (Unique)",
+    "Darkstar Hunter (Unique)",
+    "Lightning Strike Phantom (Unique)",
+    "Cybernetic Showdown Dragon (Unique)",
+    "Phantom Genesis Dragon (Unique)",
+    "Eternal Strike Leviathan (Unique)",
+    "Ultimate Supernova Pegasus (Unique)",
+    "Titan Reactor (Unique)",
+    "Neon Guardian (Unique)",
+    "Apex Overlord (Unique)"
+}
+
+for _, petName in ipairs(petList) do
+    petDropdown:Add(petName)
+end
 
 pets:AddSwitch("Auto Open Pet", function(bool)
-    _G.AutoHatchPet = bool
+    autoHatchPet = bool
     if bool then
         spawn(function()
-            while _G.AutoHatchPet and selectedPet ~= "" do
-                local petToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedPet)
-                if petToOpen then
-                    ReplicatedStorage.cPetShopRemote:InvokeServer(petToOpen)
+            while autoHatchPet and selectedPet ~= "" do
+                local petShopRemote = rEvents:FindFirstChild("cPetShopRemote") or ReplicatedStorage:FindFirstChild("cPetShopRemote")
+                
+                local runtimeFolder = ReplicatedStorage:FindFirstChild("shared") 
+                    and ReplicatedStorage.shared:FindFirstChild("runtime") 
+                    and ReplicatedStorage.shared.runtime:FindFirstChild("cPetShopFolder")
+                
+                local petToOpen = runtimeFolder and runtimeFolder:FindFirstChild(selectedPet)
+                
+                if petToOpen and petShopRemote then
+                    pcall(function()
+                        petShopRemote:InvokeServer(petToOpen)
+                    end)
                 end
                 task.wait(0.1)
             end
@@ -1921,44 +1914,63 @@ pets:AddSwitch("Auto Open Pet", function(bool)
     end
 end)
 
+pets:AddLabel("💫 Auto Buy Aura")
+
 local selectedAura = "Blue Aura"
+local autoHatchAura = false
+
 local auraDropdown = pets:AddDropdown("💫 Select Aura", function(text)
-    selectedAura = text
+    selectedAura = text:match("^(.-)%s*%(.-%)$") or text
 end)
 
-auraDropdown:Add("Entropic Blast")
-auraDropdown:Add("Azure Tundra")
-auraDropdown:Add("Blue Aura")
-auraDropdown:Add("Dark Electro")
-auraDropdown:Add("Dark Lightning")
-auraDropdown:Add("Dark Storm")
-auraDropdown:Add("Electro")
-auraDropdown:Add("Enchanted Mirage")
-auraDropdown:Add("Astral Electro")
-auraDropdown:Add("Eternal Megastrike")
-auraDropdown:Add("Grand Supernova")
-auraDropdown:Add("Green Aura")
-auraDropdown:Add("Inferno")
-auraDropdown:Add("Lightning")
-auraDropdown:Add("Muscle King")
-auraDropdown:Add("Power Lightning")
-auraDropdown:Add("Purple Aura")
-auraDropdown:Add("Purple Nova")
-auraDropdown:Add("Red Aura")
-auraDropdown:Add("Supernova")
-auraDropdown:Add("Ultra Inferno")
-auraDropdown:Add("Ultra Mirage")
-auraDropdown:Add("Unstable Mirage")
-auraDropdown:Add("Yellow Aura")
+local auraList = {
+    "Blue Aura (Basic)",
+    "Green Aura (Basic)",
+    "Yellow Aura (Basic)",
+    "Purple Aura (Basic)",
+    "Red Aura (Basic)",
+    "Electro (Rare)",
+    "Lightning (Rare)",
+    "Dark Electro (Rare)",
+    "Dark Lightning (Rare)",
+    "Azure Tundra (Epic)",
+    "Dark Storm (Epic)",
+    "Inferno (Epic)",
+    "Muscle King (Epic)",
+    "Power Lightning (Epic)",
+    "Purple Nova (Epic)",
+    "Supernova (Legendary)",
+    "Ultra Inferno (Legendary)",
+    "Enchanted Mirage (Unique)",
+    "Astral Electro (Unique)",
+    "Eternal Megastrike (Unique)",
+    "Grand Supernova (Unique)",
+    "Entropic Blast (Unique)",
+    "Ultra Mirage (Unique)",
+    "Unstable Mirage (Unique)"
+}
+
+for _, auraName in ipairs(auraList) do
+    auraDropdown:Add(auraName)
+end
 
 pets:AddSwitch("Auto Open Aura", function(bool)
-    _G.AutoHatchAura = bool
+    autoHatchAura = bool
     if bool then
         spawn(function()
-            while _G.AutoHatchAura and selectedAura ~= "" do
-                local auraToOpen = ReplicatedStorage.cPetShopFolder:FindFirstChild(selectedAura)
-                if auraToOpen then
-                    ReplicatedStorage.cPetShopRemote:InvokeServer(auraToOpen)
+            while autoHatchAura and selectedAura ~= "" do
+                local petShopRemote = rEvents:FindFirstChild("cPetShopRemote") or ReplicatedStorage:FindFirstChild("cPetShopRemote")
+                
+                local runtimeFolder = ReplicatedStorage:FindFirstChild("shared") 
+                    and ReplicatedStorage.shared:FindFirstChild("runtime") 
+                    and ReplicatedStorage.shared.runtime:FindFirstChild("cPetShopFolder")
+                
+                local auraToOpen = runtimeFolder and runtimeFolder:FindFirstChild(selectedAura)
+                
+                if auraToOpen and petShopRemote then
+                    pcall(function()
+                        petShopRemote:InvokeServer(auraToOpen)
+                    end)
                 end
                 task.wait(0.1)
             end
@@ -1974,56 +1986,78 @@ local selectedEvolvePet = ""
 local autoEvolvePet = false
 
 local evolvePetDropdown = pets:AddDropdown("🐾 Select Pet to Evolve", function(text)
-    selectedEvolvePet = text
+    selectedEvolvePet = text:match("^(.-)%s*%(.-%)$") or text
 end)
 
-evolvePetDropdown:Add("Blue Birdie (Basic)")
-evolvePetDropdown:Add("Orange Hedgehog (Basic)")
-evolvePetDropdown:Add("Red Kitty (Basic)")
-evolvePetDropdown:Add("Blue Bunny (Basic)")
-evolvePetDropdown:Add("Silver Dog (Basic)")
-evolvePetDropdown:Add("Dark Vampy (Advanced)")
-evolvePetDropdown:Add("Dark Golem (Advanced)")
-evolvePetDropdown:Add("Green Butterfly (Advanced)")
-evolvePetDropdown:Add("Yellow Butterfly (Advanced)")
-evolvePetDropdown:Add("Crimson Falcon (Rare)")
-evolvePetDropdown:Add("Purple Dragon (Rare)")
-evolvePetDropdown:Add("Orange Pegasus (Rare)")
-evolvePetDropdown:Add("Purple Falcon (Rare)")
-evolvePetDropdown:Add("Red Dragon (Rare)")
-evolvePetDropdown:Add("White Pegasus (Rare)")
-evolvePetDropdown:Add("Frostwave Legends Penguin (Rare)")
-evolvePetDropdown:Add("Phantom Genesis Dragon (Rare)")
-evolvePetDropdown:Add("Eternal Strike Leviathan (Rare)")
-evolvePetDropdown:Add("Blue Pheonix (Epic)")
-evolvePetDropdown:Add("Blue Firecaster (Epic)")
-evolvePetDropdown:Add("Golden Pheonix (Epic)")
-evolvePetDropdown:Add("Red Firecaster (Epic)")
-evolvePetDropdown:Add("Green Firecaster (Epic)")
-evolvePetDropdown:Add("White Pheonix (Epic)")
-evolvePetDropdown:Add("Dark Legends Manticore (Epic)")
-evolvePetDropdown:Add("Ultimate Supernova Pegasus (Epic)")
-evolvePetDropdown:Add("Lightning Strike Phantom (Epic)")
-evolvePetDropdown:Add("Golden Viking (Epic)")
-evolvePetDropdown:Add("Infernal Dragon (Unique)")
-evolvePetDropdown:Add("Ultra Birdie (Unique)")
-evolvePetDropdown:Add("Magic Butterfly (Unique)")
-evolvePetDropdown:Add("Aether Spirit Bunny (Unique)")
-evolvePetDropdown:Add("Cybernetic Showdown Dragon (Unique)")
-evolvePetDropdown:Add("Darkstar Hunter (Unique)")
-evolvePetDropdown:Add("Muscle Sensei (Unique)")
-evolvePetDropdown:Add("Neon Guardian (Unique)")
-evolvePetDropdown:Add("Blue Aura (Basic)")
-evolvePetDropdown:Add("Green Aura (Basic)")
-evolvePetDropdown:Add("Purple Aura (Basic)")
-evolvePetDropdown:Add("Red Aura (Basic)")
-evolvePetDropdown:Add("Yellow Aura (Basic)")
-evolvePetDropdown:Add("Ultra Inferno (Rare)")
-evolvePetDropdown:Add("Azure Tundra (Epic)")
-evolvePetDropdown:Add("Grand Supernova (Epic)")
-evolvePetDropdown:Add("Muscle King (Unique)")
-evolvePetDropdown:Add("Entropic Blast (Unique)")
-evolvePetDropdown:Add("Eternal Megastrike (Unique)")
+local evolveList = {
+    -- Basic
+    "Orange Hedgehog (Basic)",
+    "Silver Dog (Basic)",
+    "Red Kitty (Basic)",
+    "Blue Birdie (Basic)",
+    "Blue Bunny (Basic)",
+    "Core Pup (Basic)",
+    "Blue Aura (Basic)",
+    "Green Aura (Basic)",
+    "Purple Aura (Basic)",
+    "Red Aura (Basic)",
+    "Yellow Aura (Basic)",
+
+    -- Advanced
+    "Dark Vampy (Advanced)",
+    "Dark Golem (Advanced)",
+    "Green Butterfly (Advanced)",
+    "Yellow Butterfly (Advanced)",
+
+    -- Rare
+    "Crimson Falcon (Rare)",
+    "Purple Dragon (Rare)",
+    "Orange Pegasus (Rare)",
+    "Purple Falcon (Rare)",
+    "Red Dragon (Rare)",
+    "White Pegasus (Rare)",
+    "Frostwave Legends Penguin (Rare)",
+    "Phantom Genesis Dragon (Rare)",
+    "Eternal Strike Leviathan (Rare)",
+    "Volt Talon (Rare)",
+    "Magic Butterfly (Rare)",
+    "Blue Firecaster (Rare)",
+    "Red Firecaster (Rare)",
+    "Green Firecaster (Rare)",
+    "Ultra Inferno (Rare)",
+
+    -- Epic
+    "Blue Pheonix (Epic)",
+    "Golden Pheonix (Epic)",
+    "White Pheonix (Epic)",
+    "Dark Legends Manticore (Epic)",
+    "Ultimate Supernova Pegasus (Epic)",
+    "Lightning Strike Phantom (Epic)",
+    "Golden Viking (Epic)",
+    "Reactor Bea (Epic)",
+    "Gold Warrior (Epic)",
+    "Azure Tundra (Epic)",
+    "Grand Supernova (Epic)",
+
+    -- Unique
+    "Infernal Dragon (Unique)",
+    "Ultra Birdie (Unique)",
+    "Aether Spirit Bunny (Unique)",
+    "Cybernetic Showdown Dragon (Unique)",
+    "Darkstar Hunter (Unique)",
+    "Muscle Sensei (Unique)",
+    "Neon Guardian (Unique)",
+    "Apex Overlord (Unique)",
+    "Plasma Ravager (Unique)",
+    "Titan Reactor (Unique)",
+    "Muscle King (Unique)",
+    "Entropic Blast (Unique)",
+    "Eternal Megastrike (Unique)"
+}
+
+for _, item in ipairs(evolveList) do
+    evolvePetDropdown:Add(item)
+end
 
 pets:AddSwitch("🎯 Auto Evolve Selected Pet", function(state)
     autoEvolvePet = state
@@ -2115,18 +2149,73 @@ end
 game:GetService("Players").PlayerAdded:Connect(updatePlayerList)
 
 local petDropdown = pets:AddDropdown("🐈 Choose Pet", function(text) 
-    selectedPet = text 
+    selectedPet = text:match("^(.-)%s*%(.-%)$") or text 
 end)
 
 local petList = {
-    "Blue Birdie", "Orange Hedgehog", "Red Kitty", "Blue Bunny", "Silver Dog",
-    "Dark Vampy", "Dark Golem", "Green Butterfly", "Yellow Butterfly",
-    "Crimson Falcon", "Purple Dragon", "Orange Pegasus", "Purple Falcon", "Red Dragon",
-    "White Pegasus", "Frostwave Legends Penguin", "Phantom Genesis Dragon", "Eternal Strike Leviathan",
-    "Blue Pheonix", "Blue Firecaster", "Golden Pheonix", "Red Firecaster", "Green Firecaster",
-    "White Pheonix", "Dark Legends Manticore", "Ultimate Supernova Pegasus", "Lightning Strike Phantom", "Golden Viking",
-    "Infernal Dragon", "Ultra Birdie", "Magic Butterfly", "Aether Spirit Bunny",
-    "Cybernetic Showdown Dragon", "Darkstar Hunter", "Muscle Sensei", "Neon Guardian"
+    -- Basic
+    "Orange Hedgehog (Basic)",
+    "Silver Dog (Basic)",
+    "Red Kitty (Basic)",
+    "Blue Birdie (Basic)",
+    "Blue Bunny (Basic)",
+    "Core Pup (Basic)",
+    "Blue Aura (Basic)",
+    "Green Aura (Basic)",
+    "Purple Aura (Basic)",
+    "Red Aura (Basic)",
+    "Yellow Aura (Basic)",
+
+    -- Advanced
+    "Dark Vampy (Advanced)",
+    "Dark Golem (Advanced)",
+    "Green Butterfly (Advanced)",
+    "Yellow Butterfly (Advanced)",
+
+    -- Rare
+    "Crimson Falcon (Rare)",
+    "Purple Dragon (Rare)",
+    "Orange Pegasus (Rare)",
+    "Purple Falcon (Rare)",
+    "Red Dragon (Rare)",
+    "White Pegasus (Rare)",
+    "Frostwave Legends Penguin (Rare)",
+    "Phantom Genesis Dragon (Rare)",
+    "Eternal Strike Leviathan (Rare)",
+    "Volt Talon (Rare)",
+    "Magic Butterfly (Rare)",
+    "Blue Firecaster (Rare)",
+    "Red Firecaster (Rare)",
+    "Green Firecaster (Rare)",
+    "Ultra Inferno (Rare)",
+
+    -- Epic
+    "Blue Pheonix (Epic)",
+    "Golden Pheonix (Epic)",
+    "White Pheonix (Epic)",
+    "Dark Legends Manticore (Epic)",
+    "Ultimate Supernova Pegasus (Epic)",
+    "Lightning Strike Phantom (Epic)",
+    "Golden Viking (Epic)",
+    "Reactor Bea (Epic)",
+    "Gold Warrior (Epic)",
+    "Azure Tundra (Epic)",
+    "Grand Supernova (Epic)",
+
+    -- Unique
+    "Infernal Dragon (Unique)",
+    "Ultra Birdie (Unique)",
+    "Aether Spirit Bunny (Unique)",
+    "Cybernetic Showdown Dragon (Unique)",
+    "Darkstar Hunter (Unique)",
+    "Muscle Sensei (Unique)",
+    "Neon Guardian (Unique)",
+    "Apex Overlord (Unique)",
+    "Plasma Ravager (Unique)",
+    "Titan Reactor (Unique)",
+    "Muscle King (Unique)",
+    "Entropic Blast (Unique)",
+    "Eternal Megastrike (Unique)"
 }
 
 for _, name in ipairs(petList) do 
@@ -2220,34 +2309,41 @@ local function createFarm(folder, toggleName, cframeValue, eventName)
     end)
 end
 
--- 1. JUNGLE GYM
+-- 1. INDUSTRIAL GYM
+local IndustrialFolder = GymTab:AddFolder(" ⚙️ Industrial Gym")
+createFarm(IndustrialFolder, "⚙️ Auto Industrial Bar Lift", CFrame.new(-5492.24, 81.82, 4644.04), "rep")
+createFarm(IndustrialFolder, "🏋️ Auto Industrial Bench", CFrame.new(-5014.39, 111.46, 4462.90), "rep")
+createFarm(IndustrialFolder, "🦵 Auto Industrial Squat", CFrame.new(-5216.36, 90.17, 5420.08), "rep")
+createFarm(IndustrialFolder, "💢 Auto Industrial Boulder", CFrame.new(-5452.94, 84.47, 5232.03), "rep")
+
+-- 2. JUNGLE GYM
 local JungleFolder = GymTab:AddFolder(" 🌴 Jungle Gym")
 createFarm(JungleFolder, "🏋️ Auto Jungle Lift", CFrame.new(-8652.85, 45.22, 2088.99), "rep")
 createFarm(JungleFolder, "💪 Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40), "rep")
 createFarm(JungleFolder, "🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
 createFarm(JungleFolder, "Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
 
--- 2. MUSCLE KING
+-- 3. MUSCLE KING
 local MuscleKingFolder = GymTab:AddFolder(" 👑 Muscle King")
 createFarm(MuscleKingFolder, "🏋️ Auto Lift", CFrame.new(-8774.03, 52.15, -5664.10), "rep")
 createFarm(MuscleKingFolder, "💪 Auto Bench Press", CFrame.new(-8589.43, 58.00, -6044.57), "rep")
 createFarm(MuscleKingFolder, "🦵 Auto Squat", CFrame.new(-8759.62, 46.50, -6041.16), "rep")
 createFarm(MuscleKingFolder, "🗿 Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
 
--- 3. LEGENDS GYM
+-- 4. LEGENDS GYM
 local LegendsFolder = GymTab:AddFolder(" 🌟 Legends Gym")
 createFarm(LegendsFolder, "🏋️ Auto Lift", CFrame.new(4532.02, 1025.80, -4002.15), "rep")
 createFarm(LegendsFolder, "💪 Auto Bench Press", CFrame.new(4109.20, 1035.67, -3802.88), "rep")
 createFarm(LegendsFolder, "🦵 Auto Squat", CFrame.new(4438.74, 1021.38, -4058.46), "rep")
 createFarm(LegendsFolder, "🗿 Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
 
--- 4. MYTHICAL GYM
+-- 5. MYTHICAL GYM
 local MythicalFolder = GymTab:AddFolder(" 🔮 Mythical Gym")
 createFarm(MythicalFolder, "🏋️ Auto Lift", CFrame.new(2486.75, 31.91, 847.89), "rep")
 createFarm(MythicalFolder, "💪 Auto Bench Press", CFrame.new(2370.74, 57.09, 1243.37), "rep")
 createFarm(MythicalFolder, "🗿 Auto Boulder", CFrame.new(2667.31, 58.88, 1202.46), "rep")
 
--- 5. FROST GYM
+-- 6. FROST GYM
 local FrostFolder = GymTab:AddFolder(" ❄️ Frost Gym")
 createFarm(FrostFolder, "🏋️ Auto Lift", CFrame.new(-2917.62, 42.60, -211.29), "rep")
 createFarm(FrostFolder, "💪 Auto Bench Press", CFrame.new(-3022.97, 41.31, -197.51), "rep")
@@ -2314,100 +2410,136 @@ Misc:AddButton("🚀 FPS Booster", function()
     })
 end)
 
+local afkActive = false
+
 Misc:AddSwitch("⏳ Anti Afk", function(Value)
+    afkActive = Value
+    
+    local Player = game:GetService("Players").LocalPlayer
+    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui")
+    
     if Value then
-        _G.AntiAfkActive = true
-        
-        local vu = game:GetService("VirtualUser")
-        antiAfkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            if _G.AntiAfkActive then
-                vu:CaptureController()
-                vu:ClickButton2(Vector2.new())
-            end
-        end)
-
-        local ScreenGui = Instance.new("ScreenGui")
-        local MainFrame = Instance.new("Frame")
-        local UICorner = Instance.new("UICorner")
-        local Title = Instance.new("TextLabel")
-        local Separator = Instance.new("Frame")
-        local TimerLabel = Instance.new("TextLabel")
-        local FPSLabel = Instance.new("TextLabel")
-        local MSLabel = Instance.new("TextLabel")
-        local UIStroke = Instance.new("UIStroke")
-
-        ScreenGui.Name = "Syniox_AntiAFK"
-        ScreenGui.Parent = game:GetService("CoreGui")
-        
-        MainFrame.Parent = ScreenGui
-        MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) 
-        MainFrame.BackgroundTransparency = 0.1
-        MainFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
-        MainFrame.Size = UDim2.new(0, 120, 0, 125)
-        MainFrame.Active = true
-        MainFrame.Draggable = true 
-
-        UICorner.CornerRadius = UDim.new(0, 8)
-        UICorner.Parent = MainFrame
-
-        UIStroke.Parent = MainFrame
-        UIStroke.Color = Color3.fromRGB(150, 0, 0) 
-        UIStroke.Thickness = 1.5
-
-        Title.Parent = MainFrame
-        Title.Size = UDim2.new(1, 0, 0, 28)
-        Title.Text = "Syniox Anti-Afk" 
-        Title.TextColor3 = Color3.fromRGB(200, 0, 0)
-        Title.BackgroundTransparency = 1
-        Title.TextSize = 15
-        Title.Font = Enum.Font.SourceSansBold
-
-        Separator.Parent = MainFrame
-        Separator.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        Separator.BorderSizePixel = 0
-        Separator.Position = UDim2.new(0.1, 0, 0, 28)
-        Separator.Size = UDim2.new(0.8, 0, 0, 1)
-
-        local function SetupLabel(lbl, text, pos)
-            lbl.Parent = MainFrame
-            lbl.Position = pos
-            lbl.Size = UDim2.new(1, 0, 0, 25)
-            lbl.Text = text
-            lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-            lbl.BackgroundTransparency = 1
-            lbl.TextSize = 16
-            lbl.Font = Enum.Font.SourceSansBold
-            lbl.TextXAlignment = Enum.TextXAlignment.Center
+        if PlayerGui:FindFirstChild("Syniox_GUI") then 
+            PlayerGui.Syniox_GUI:Destroy() 
         end
 
-        SetupLabel(TimerLabel, "⏳ Time: 00:00:00", UDim2.new(0, 0, 0, 35))
-        SetupLabel(FPSLabel, "🚀 FPS: 0", UDim2.new(0, 0, 0, 62))
-        SetupLabel(MSLabel, "📡 MS: 0", UDim2.new(0, 0, 0, 89))
-
-        local startTime = os.time()
-        local RunService = game:GetService("RunService")
+        local TweenService = game:GetService("TweenService")
         local Stats = game:GetService("Stats")
-        
-        task.spawn(function()
-            while _G.AntiAfkActive do
-                local diff = os.time() - startTime
-                TimerLabel.Text = string.format("⏳ Time: %02d:%02d:%02d", math.floor(diff/3600), math.floor((diff%3600)/60), diff%60)
-                
-                local fps = math.floor(1 / RunService.RenderStepped:Wait())
-                FPSLabel.Text = "🚀 FPS: " .. fps
-                
-                local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-                MSLabel.Text = "📡 MS: " .. ping
-                
-                task.wait(0.5)
+        local RunService = game:GetService("RunService")
+
+        local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+        ScreenGui.Name = "Syniox_GUI"
+
+        local MainFrame = Instance.new("Frame", ScreenGui)
+        MainFrame.Size = UDim2.new(0, 190, 0, 210)
+        MainFrame.Position = UDim2.new(-0.3, 0, 0.4, 0)
+        MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        MainFrame.Active = true
+        MainFrame.Draggable = true
+        Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+        local Stroke = Instance.new("UIStroke", MainFrame)
+        Stroke.Color = Color3.fromRGB(160, 0, 0)
+        Stroke.Thickness = 2
+
+        local Title = Instance.new("TextLabel", MainFrame)
+        Title.Size = UDim2.new(1, -40, 0, 40)
+        Title.Position = UDim2.new(0, 15, 0, 0)
+        Title.Text = "SYNIOX | AFK"
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.Font = Enum.Font.GothamBold
+        Title.TextSize = 13
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+        Title.BackgroundTransparency = 1
+
+        local ToggleBtn = Instance.new("TextButton", MainFrame)
+        ToggleBtn.Size = UDim2.new(0, 25, 0, 25)
+        ToggleBtn.Position = UDim2.new(1, -35, 0, 7)
+        ToggleBtn.Text = "-"
+        ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
+
+        local StatContainer = Instance.new("Frame", MainFrame)
+        StatContainer.Size = UDim2.new(1, -20, 0, 90)
+        StatContainer.Position = UDim2.new(0, 10, 0, 40)
+        StatContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Instance.new("UICorner", StatContainer).CornerRadius = UDim.new(0, 6)
+
+        local function CreateTxt(text, pos)
+            local lbl = Instance.new("TextLabel", StatContainer)
+            lbl.Size = UDim2.new(1, 0, 0, 30)
+            lbl.Position = pos
+            lbl.Text = text
+            lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+            lbl.Font = Enum.Font.GothamSemibold
+            lbl.TextSize = 13
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.BackgroundTransparency = 1
+            return lbl
+        end
+
+        local TxtTime = CreateTxt("  ⏳ 00:00:00", UDim2.new(0,0,0,0))
+        local TxtFPS  = CreateTxt("  🚀 FPS: --", UDim2.new(0,0,0,30))
+        local TxtMS   = CreateTxt("  📡 MS: --", UDim2.new(0,0,0,60))
+
+        local BoostBtn = Instance.new("TextButton", MainFrame)
+        BoostBtn.Size = UDim2.new(0, 170, 0, 40)
+        BoostBtn.Position = UDim2.new(0.5, -85, 0, 150)
+        BoostBtn.BackgroundColor3 = Color3.fromRGB(160, 0, 0)
+        BoostBtn.Text = "FPS BOOST"
+        BoostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        BoostBtn.Font = Enum.Font.GothamBold
+        BoostBtn.TextSize = 14
+        Instance.new("UICorner", BoostBtn).CornerRadius = UDim.new(0, 6)
+
+        local isMinimized = false
+        ToggleBtn.MouseButton1Click:Connect(function()
+            isMinimized = not isMinimized
+            local targetSize = isMinimized and UDim2.new(0, 190, 0, 40) or UDim2.new(0, 190, 0, 210)
+            
+            TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+            
+            StatContainer.Visible = not isMinimized
+            BoostBtn.Visible = not isMinimized
+            ToggleBtn.Text = isMinimized and "+" or "-"
+        end)
+
+        BoostBtn.MouseButton1Down:Connect(function()
+            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 160, 0, 38)}):Play()
+        end)
+
+        BoostBtn.MouseButton1Up:Connect(function()
+            TweenService:Create(BoostBtn, TweenInfo.new(0.1, Enum.EasingStyle.Sine), {Size = UDim2.new(0, 170, 0, 40)}):Play()
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v:IsA("Decal") or v:IsA("Texture") or v:IsA("ParticleEmitter") or v:IsA("Fire") or v:IsA("Smoke") then v:Destroy() end
             end
         end)
 
+        local VirtualUser = game:GetService("VirtualUser")
+        local idledConn = Player.Idled:Connect(function() 
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new()) 
+        end)
+
+        local start = os.time()
+        task.spawn(function()
+            while afkActive do
+                task.wait(0.5)
+                if not isMinimized and MainFrame.Parent then
+                    local d = os.time() - start
+                    TxtTime.Text = string.format("  ⏳ %02d:%02d:%02d", math.floor(d/3600), math.floor((d%3600)/60), d%60)
+                    TxtFPS.Text = "  🚀 FPS: " .. math.floor(1 / RunService.RenderStepped:Wait())
+                    TxtMS.Text = "  📡 MS: " .. math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+                end
+            end
+            if idledConn then idledConn:Disconnect() end
+        end)
+
+        TweenService:Create(MainFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.02, 0, 0.4, 0)}):Play()
     else
-        _G.AntiAfkActive = false
-        if antiAfkConnection then antiAfkConnection:Disconnect() end
-        local oldGui = game:GetService("CoreGui"):FindFirstChild("Syniox_AntiAFK")
-        if oldGui then oldGui:Destroy() end
+        if PlayerGui:FindFirstChild("Syniox_GUI") then
+            PlayerGui.Syniox_GUI:Destroy()
+        end
     end
 end)
 
@@ -2432,19 +2564,24 @@ end)
 Misc:AddSwitch("🎰 Auto Fortune Wheel", function(Value)
     _G.autoFortuneWheelActive = Value
     if Value then
-        local function openFortuneWheel()
+        task.spawn(function()
             while _G.autoFortuneWheelActive do
-                local args = {
-                    [1] = "openFortuneWheel",
-                    [2] = game:GetService("ReplicatedStorage"):WaitForChild("fortuneWheelChances"):WaitForChild("Fortune Wheel")
-                }
-                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer(unpack(args))
-                wait(0)
+                pcall(function()
+                    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                    local wheelRemote = ReplicatedStorage.rEvents:FindFirstChild("openFortuneWheelRemote")
+                    
+                    local wheelChance = ReplicatedStorage:FindFirstChild("shared") 
+                        and ReplicatedStorage.shared:FindFirstChild("catalogs") 
+                        and ReplicatedStorage.shared.catalogs:FindFirstChild("fortuneWheelChances")
+                        and ReplicatedStorage.shared.catalogs.fortuneWheelChances:FindFirstChild("Fortune Wheel")
+                    
+                    if wheelRemote and wheelChance then
+                        wheelRemote:InvokeServer("openFortuneWheel", wheelChance)
+                    end
+                end)
+                task.wait(0.5)
             end
-        end
-        coroutine.wrap(openFortuneWheel)()
-    else
-        _G.autoFortuneWheelActive = false
+        end)
     end
 end)
 
@@ -2577,50 +2714,6 @@ Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     else
         makePartsWalkthrough()
     end
-end)
-
-local autoEatBoostsEnabled = false
-
-local boostsList = {
-    "ULTRA Shake",
-    "TOUGH Bar",
-    "Protein Shake",
-    "Energy Shake",
-    "Protein Bar",
-    "Energy Bar",
-}
-
-local function eatAllBoosts()
-    local player = game.Players.LocalPlayer
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    for _, boostName in ipairs(boostsList) do
-        local boost = backpack:FindFirstChild(boostName)
-        while boost do
-            boost.Parent = character
-            pcall(function()
-                boost:Activate()
-            end)
-            task.wait(0)
-            boost = backpack:FindFirstChild(boostName)
-        end
-    end
-end
-
-task.spawn(function()
-    while true do
-        if autoEatBoostsEnabled then
-            eatAllBoosts()
-            task.wait(2)
-        else
-            task.wait(1)
-        end
-    end
-end)
-
-Misc:AddSwitch("🍴 Auto Eat All (No Egg)", function(state)
-    autoEatBoostsEnabled = state
 end)
 
 Misc:AddSwitch("⬆️ Infinite Jump", function(state)
