@@ -1032,14 +1032,23 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
-rebirths:AddSwitch("👁️‍🗨️ Hide Al Frames", function(bool)
-    local player = game:GetService("Players").LocalPlayer
-    local playerGui = player:FindFirstChild("PlayerGui")
+rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
+    local rSto = game:GetService("ReplicatedStorage")
+    for _, obj in pairs(rSto:GetChildren()) do
+        if obj.Name:match("Frame$") and obj:IsA("GuiObject") then
+            obj.Visible = not bool
+        end
+    end
     
+    local playerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
     if playerGui then
         for _, gui in pairs(playerGui:GetChildren()) do
             if gui:IsA("ScreenGui") then
-                gui.Enabled = not bool
+                for _, obj in pairs(gui:GetDescendants()) do
+                    if obj.Name:match("Frame$") and obj:IsA("GuiObject") then
+                        obj.Visible = not bool
+                    end
+                end
             end
         end
     end
