@@ -705,7 +705,7 @@ for _, loc in ipairs(Locations) do
 end
 
 AutoFarm:AddLabel("----------------------------")
-AutoFarm:AddLabel("🌴 Jungle Gym Farm")
+AutoFarm:AddLabel(" Industrial Jungle Gym Farm")
 
 local VIM = game:GetService("VirtualInputManager")
 
@@ -741,10 +741,10 @@ local function startJungleFarm(toggleName, cframeValue, eventName)
     end)
 end
 
-startJungleFarm("🌴 Auto Jungle Lift", CFrame.new(-8652.85, 45.22, 2088.99), "rep")
-startJungleFarm("🏋️ Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40), "rep")
-startJungleFarm("🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
-startJungleFarm("💢 Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
+startJungleFarm("⚙️ Auto Industrial Bar Lift", CFrame.new(-5492.24, 81.82, 4644.04), "rep")
+startJungleFarm("🏋️ Auto Industrial Bench", CFrame.new(-5014.39, 111.46, 4462.90), "rep")
+startJungleFarm("🦵 Auto Industrial Squat", CFrame.new(-5216.36, 90.17, 5420.08), "rep")
+startJungleFarm("💢 Auto Industrial Boulder", CFrame.new(-5452.94, 84.47, 5232.03), "rep")
 
 AutoFarm:AddLabel("----------------------------")
 AutoFarm:AddLabel("⚡ OP Tools")
@@ -1030,6 +1030,7 @@ end, "Tp to Mk")
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local PlayerData = player
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local rEvents = ReplicatedStorage:WaitForChild("rEvents", 5)
@@ -1038,7 +1039,7 @@ local muscleEvent = rEvents and rEvents:WaitForChild("muscleEvent", 5)
 local autoEat30Enabled = false
 local autoEat60Enabled = false
 
-local function useProteinEgg()
+local function useProteinEgg30()
     if not muscleEvent then return end
     
     local boost = player:FindFirstChild("boostTimersFolder") and player.boostTimersFolder:FindFirstChild("Protein Egg")
@@ -1049,7 +1050,24 @@ local function useProteinEgg()
     end
     
     local character = player.Character or player.CharacterAdded:Wait()
-    local tool = character:FindFirstChild("Protein Egg") or player.Backpack:FindFirstChild("Protein Egg")
+    local tool = character:FindFirstChild("Protein Egg") or PlayerData:FindFirstChild("Backpack") and PlayerData.Backpack:FindFirstChild("Protein Egg")
+    if tool then
+        muscleEvent:FireServer("proteinEgg", tool)
+    end
+end
+
+local function useProteinEgg60()
+    if not muscleEvent then return end
+    
+    local boost = player:FindFirstChild("boostTimersFolder") and player.boostTimersFolder:FindFirstChild("Protein Egg")
+    if boost and boost:IsA("IntValue") then
+        if boost.Value >= 5 then
+            return
+        end
+    end
+    
+    local character = player.Character or player.CharacterAdded:Wait()
+    local tool = character:FindFirstChild("Protein Egg") or PlayerData:FindFirstChild("Backpack") and PlayerData.Backpack:FindFirstChild("Protein Egg")
     if tool then
         muscleEvent:FireServer("proteinEgg", tool)
     end
@@ -1058,7 +1076,7 @@ end
 task.spawn(function()
     while true do
         if autoEat30Enabled then
-            useProteinEgg()
+            useProteinEgg30()
             task.wait(1800)
         else
             task.wait(1)
@@ -1070,7 +1088,7 @@ if rebirths then
     rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
         autoEat30Enabled = state
         if state then
-            useProteinEgg()
+            useProteinEgg30()
         end
     end)
 end
@@ -1078,7 +1096,7 @@ end
 task.spawn(function()
     while true do
         if autoEat60Enabled then
-            useProteinEgg()
+            useProteinEgg60()
             task.wait(3600)
         else
             task.wait(1)
@@ -1090,7 +1108,7 @@ if rebirths then
     rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
         autoEat60Enabled = state
         if state then
-            useProteinEgg()
+            useProteinEgg60()
         end
     end)
 end
@@ -2061,6 +2079,30 @@ Rock:AddSwitch("🌴 Jungle Rock 10M", function(Value)
             if game:GetService("Players").LocalPlayer.Durability.Value >= 10000000 then
                 for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
                     if v.Name == "neededDurability" and v.Value == 10000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        for _ = 1, 3 do
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                            firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        end
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("⚙️ Industrial Jungle Rock 25M", function(Value)
+    selectrock = "Industrial Jungle Rock"
+    getgenv().autoFarm = Value
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait(0.01)
+            if not getgenv().autoFarm then break end
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 25000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 25000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
                         for _ = 1, 3 do
                             firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
                             firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
