@@ -1028,91 +1028,6 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local PlayerData = player
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local rEvents = ReplicatedStorage:WaitForChild("rEvents", 5)
-local muscleEvent = rEvents and rEvents:WaitForChild("muscleEvent", 5)
-
-local autoEat30Enabled = false
-local autoEat60Enabled = false
-
-local function useProteinEgg30()
-    if not muscleEvent then return end
-    
-    local boost = player:FindFirstChild("boostTimersFolder") and player.boostTimersFolder:FindFirstChild("Protein Egg")
-    if boost and boost:IsA("IntValue") then
-        if boost.Value >= 5 then
-            return
-        end
-    end
-    
-    local character = player.Character or player.CharacterAdded:Wait()
-    local tool = character:FindFirstChild("Protein Egg") or PlayerData:FindFirstChild("Backpack") and PlayerData.Backpack:FindFirstChild("Protein Egg")
-    if tool then
-        muscleEvent:FireServer("proteinEgg", tool)
-    end
-end
-
-local function useProteinEgg60()
-    if not muscleEvent then return end
-    
-    local boost = player:FindFirstChild("boostTimersFolder") and player.boostTimersFolder:FindFirstChild("Protein Egg")
-    if boost and boost:IsA("IntValue") then
-        if boost.Value >= 5 then
-            return
-        end
-    end
-    
-    local character = player.Character or player.CharacterAdded:Wait()
-    local tool = character:FindFirstChild("Protein Egg") or PlayerData:FindFirstChild("Backpack") and PlayerData.Backpack:FindFirstChild("Protein Egg")
-    if tool then
-        muscleEvent:FireServer("proteinEgg", tool)
-    end
-end
-
-task.spawn(function()
-    while true do
-        if autoEat30Enabled then
-            useProteinEgg30()
-            task.wait(1800)
-        else
-            task.wait(1)
-        end
-    end
-end)
-
-if rebirths then
-    rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
-        autoEat30Enabled = state
-        if state then
-            useProteinEgg30()
-        end
-    end)
-end
-
-task.spawn(function()
-    while true do
-        if autoEat60Enabled then
-            useProteinEgg60()
-            task.wait(3600)
-        else
-            task.wait(1)
-        end
-    end
-end)
-
-if rebirths then
-    rebirths:AddSwitch("🥚 Auto Eat Egg 60 Min", function(state)
-        autoEat60Enabled = state
-        if state then
-            useProteinEgg60()
-        end
-    end)
-end
-
 rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
     local rSto = game:GetService("ReplicatedStorage")
     for _, obj in pairs(rSto:GetChildren()) do
@@ -2738,40 +2653,128 @@ local function createFarm(folder, toggleName, cframeValue, eventName)
     end)
 end
 
--- 1. JUNGLE GYM
+-- 1. INDUSTRIAL GYM
+local IndustrialFolder = GymTab:AddFolder(" ⚙️ Industrial Gym")
+createFarm(IndustrialFolder, "⚙️ Auto Industrial Bar Lift", CFrame.new(-5492.24, 81.82, 4644.04), "rep")
+createFarm(IndustrialFolder, "🏋️ Auto Industrial Bench", CFrame.new(-5014.39, 111.46, 4462.90), "rep")
+createFarm(IndustrialFolder, "🦵 Auto Industrial Squat", CFrame.new(-5216.36, 90.17, 5420.08), "rep")
+createFarm(IndustrialFolder, "💢 Auto Industrial Boulder", CFrame.new(-5452.94, 84.47, 5232.03), "rep")
+
+-- 2. JUNGLE GYM
 local JungleFolder = GymTab:AddFolder(" 🌴 Jungle Gym")
 createFarm(JungleFolder, "🏋️ Auto Jungle Lift", CFrame.new(-8652.85, 45.22, 2088.99), "rep")
 createFarm(JungleFolder, "💪 Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40), "rep")
 createFarm(JungleFolder, "🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
 createFarm(JungleFolder, "Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
 
--- 2. MUSCLE KING
+-- 3. MUSCLE KING
 local MuscleKingFolder = GymTab:AddFolder(" 👑 Muscle King")
 createFarm(MuscleKingFolder, "🏋️ Auto Lift", CFrame.new(-8774.03, 52.15, -5664.10), "rep")
 createFarm(MuscleKingFolder, "💪 Auto Bench Press", CFrame.new(-8589.43, 58.00, -6044.57), "rep")
 createFarm(MuscleKingFolder, "🦵 Auto Squat", CFrame.new(-8759.62, 46.50, -6041.16), "rep")
 createFarm(MuscleKingFolder, "🗿 Auto Boulder", CFrame.new(-8942.97, 60.71, -5692.74), "rep")
 
--- 3. LEGENDS GYM
+-- 4. LEGENDS GYM
 local LegendsFolder = GymTab:AddFolder(" 🌟 Legends Gym")
 createFarm(LegendsFolder, "🏋️ Auto Lift", CFrame.new(4532.02, 1025.80, -4002.15), "rep")
 createFarm(LegendsFolder, "💪 Auto Bench Press", CFrame.new(4109.20, 1035.67, -3802.88), "rep")
 createFarm(LegendsFolder, "🦵 Auto Squat", CFrame.new(4438.74, 1021.38, -4058.46), "rep")
 createFarm(LegendsFolder, "🗿 Auto Boulder", CFrame.new(4188.75, 1019.85, -3905.19), "rep")
 
--- 4. MYTHICAL GYM
+-- 5. MYTHICAL GYM
 local MythicalFolder = GymTab:AddFolder(" 🔮 Mythical Gym")
 createFarm(MythicalFolder, "🏋️ Auto Lift", CFrame.new(2486.75, 31.91, 847.89), "rep")
 createFarm(MythicalFolder, "💪 Auto Bench Press", CFrame.new(2370.74, 57.09, 1243.37), "rep")
 createFarm(MythicalFolder, "🗿 Auto Boulder", CFrame.new(2667.31, 58.88, 1202.46), "rep")
 
--- 5. FROST GYM
+-- 6. FROST GYM
 local FrostFolder = GymTab:AddFolder(" ❄️ Frost Gym")
 createFarm(FrostFolder, "🏋️ Auto Lift", CFrame.new(-2917.62, 42.60, -211.29), "rep")
 createFarm(FrostFolder, "💪 Auto Bench Press", CFrame.new(-3022.97, 41.31, -197.51), "rep")
 createFarm(FrostFolder, "🦵 Auto Squat", CFrame.new(-2720.66, 27.85, -590.72), "rep")
 
 local Misc = window:AddTab("Misc")
+
+local ProteinEggLabel = Misc:AddLabel("Protein Eggs Owned: 0")
+ProteinEggLabel.TextSize = 14
+
+task.spawn(function()
+	while true do
+		local proteinEggCount = 0
+		local tropicalShakeCount = 0
+		if PlayerData.Backpack then
+			for _, item in ipairs(PlayerData.Backpack:GetChildren()) do
+				if item.Name == "Protein Egg" then proteinEggCount = proteinEggCount + 1
+				elseif item.Name == "Tropical Shake" then tropicalShakeCount = tropicalShakeCount + 1 end
+			end
+		end
+		ProteinEggLabel.Text = "Protein Eggs: " .. proteinEggCount
+		task.wait(7.5)
+	end
+end)
+
+local ProteinEggBoostLabel = Misc:AddLabel("Protein Egg Boost: 00:00")
+ProteinEggBoostLabel.TextSize = 14
+
+local function formatTime(seconds)
+    local m = math.floor(seconds / 60)
+    local s = seconds % 60
+    return string.format("%02d:%02d", m, s)
+end
+
+task.spawn(function()
+    while true do
+        local boostTimersFolder = game.Players.LocalPlayer:FindFirstChild("boostTimersFolder")
+        if boostTimersFolder then
+            local boost = boostTimersFolder:FindFirstChild("Protein Egg")
+            if boost and boost:IsA("IntValue") then
+                local seconds = boost.Value
+                ProteinEggBoostLabel.Text = "Protein Egg Timer: " .. formatTime(seconds)
+            else
+                ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
+            end
+        else
+            ProteinEggBoostLabel.Text = "Protein Egg Timer: 00:00"
+        end
+        task.wait(0.5)
+    end
+end)
+
+
+local function useEggs()
+    local boost = game.Players.LocalPlayer.boostTimersFolder:FindFirstChild("Protein Egg")
+    if boost and boost:IsA("IntValue") then
+        local seconds = boost.Value
+        if seconds >= 5 then
+            return
+        end
+    end
+    
+    local tool = player.Character:FindFirstChild("Protein Egg") or player.Backpack:FindFirstChild("Protein Egg")
+    if tool then
+        muscleEvent:FireServer("proteinEgg", tool)
+    end
+end
+
+local running1 = false
+
+task.spawn(function()
+    while true do
+        if running1 then
+            useEggs()
+            task.wait(1800)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+local autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
+    running1 = state
+    if state then
+        useEggs()
+    end
+end)
 
 local function claimChests()
     local lp = game:GetService("Players").LocalPlayer
