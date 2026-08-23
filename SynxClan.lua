@@ -708,6 +708,7 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 local Locations = {
+    {name = "🏭 Industrial Treadmill +20 xp", pos = Vector3.new(-4989.90, 81.62, 5414.85)},
     {name = "🌿 Jungle Treadmill +8 xp", pos = Vector3.new(-8131.86, 25.77, 2818.17)},
     {name = "🔱 Legends Treadmill +7 xp", pos = Vector3.new(4365.82, 997.14, -3632.9)},
     {name = "✨ Mythical Treadmill +6 xp", pos = Vector3.new(2661.67, 19.41, 932.09)},
@@ -3262,50 +3263,6 @@ Misc:AddSwitch("🌊 Full Walk on Water", function(bool)
     end
 end)
 
-local autoEatBoostsEnabled = false
-
-local boostsList = {
-    "ULTRA Shake",
-    "TOUGH Bar",
-    "Protein Shake",
-    "Energy Shake",
-    "Protein Bar",
-    "Energy Bar",
-}
-
-local function eatAllBoosts()
-    local player = game.Players.LocalPlayer
-    local backpack = player:WaitForChild("Backpack")
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    for _, boostName in ipairs(boostsList) do
-        local boost = backpack:FindFirstChild(boostName)
-        while boost do
-            boost.Parent = character
-            pcall(function()
-                boost:Activate()
-            end)
-            task.wait(0)
-            boost = backpack:FindFirstChild(boostName)
-        end
-    end
-end
-
-task.spawn(function()
-    while true do
-        if autoEatBoostsEnabled then
-            eatAllBoosts()
-            task.wait(2)
-        else
-            task.wait(1)
-        end
-    end
-end)
-
-Misc:AddSwitch("🍴 Auto Eat All (No Egg)", function(state)
-    autoEatBoostsEnabled = state
-end)
-
 Misc:AddSwitch("⬆️ Infinite Jump", function(state)
     getgenv().InfiniteJump = state
     game:GetService("UserInputService").JumpRequest:connect(function()
@@ -3449,165 +3406,182 @@ end)
 
 local teleport = window:AddTab("Teleport")
 
-teleport:AddButton("📍Spawn", function()
+-- Gym
+teleport:AddButton("🏠 Spawn", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(2, 8, 115)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Spawn",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Spawn bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Secret Area", function()
+teleport:AddButton("🔮 Secret Area", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(1947, 2, 6191)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Secret Area",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Secret Area bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Tiny Island", function()
+teleport:AddButton("🏝️ Tiny Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(-34, 7, 1903)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Tiny Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Tiny Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Frozen Island", function()
+teleport:AddButton("❄️ Frozen Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    humanoidRootPart.CFrame = CFrame.new(- 2600.00244, 3.67686558, - 403.884369, 0.0873617008, 1.0482899e-09, 0.99617666, 3.07204253e-08, 1, - 3.7464023e-09, - 0.99617666, 3.09302628e-08, 0.0873617008)
+    humanoidRootPart.CFrame = CFrame.new(-2600.00244, 3.67686558, -403.884369, 0.0873617008, 1.0482899e-09, 0.99617666, 3.07204253e-08, 1, -3.7464023e-09, -0.99617666, 3.09302628e-08, 0.0873617008)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Frozen Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Frozen Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Mythical Island", function()
+teleport:AddButton("⚡ Mythical Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(2255, 7, 1071)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Mythical Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Mythical Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Hell Island", function()
+teleport:AddButton("🔥 Hell Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(-6768, 7, -1287)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Hell Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Hell Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Legend Island", function()
+teleport:AddButton("🛡️ Legend Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(4604, 991, -3887)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Legend Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Legend Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Muscle King Island", function()
+teleport:AddButton("👑 Muscle King", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(-8646, 17, -5738)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Muscle King",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Muscle King bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Jungle Island", function()
+teleport:AddButton("🌴 Jungle Island", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(-8659, 6, 2384)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Jungle Island",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Jungle Island bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Brawl Lava", function()
+teleport:AddButton("⚙️ Industrial Gym", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    humanoidRootPart.CFrame = CFrame.new(4471, 119, -8836)
+    humanoidRootPart.CFrame = CFrame.new(-5350, 57, 4929)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Brawl Lava",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Industrial Gym bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
-teleport:AddButton("📍Brawl Desert", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    humanoidRootPart.CFrame = CFrame.new(960, 17, -7398)
-    
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Brawl Desert",
-        Duration = 0
-    })
-end)
+teleport:AddLabel("----------------------------------------")
 
-teleport:AddButton("📍Brawl Regular", function()
+-- Brawl
+teleport:AddButton("⚔️ Brawl Regular", function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     humanoidRootPart.CFrame = CFrame.new(-1849, 20, -6335)
     
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Teleport",
-        Text = "Teleported to Brawl Regular",
-        Duration = 0
+        Title = "Syniox Hub",
+        Text = "Brawl Regular bölgesine ışınlanıldı",
+        Duration = 2
+    })
+end)
+
+teleport:AddButton("🏜️ Brawl Desert", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    humanoidRootPart.CFrame = CFrame.new(960, 17, -7398)
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub",
+        Text = "Brawl Desert bölgesine ışınlanıldı",
+        Duration = 2
+    })
+end)
+
+teleport:AddButton("🌋 Brawl Lava", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    humanoidRootPart.CFrame = CFrame.new(4471, 119, -8836)
+    
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Syniox Hub",
+        Text = "Brawl Lava bölgesine ışınlanıldı",
+        Duration = 2
     })
 end)
 
 local credits = window:AddTab("Credits")
 
-local title = credits:AddLabel("✨ Syniox Hub V2")
+local title = credits:AddLabel("✨ Syniox Clan V1")
 title.TextColor3 = Color3.fromRGB(255, 215, 0)
 
 local dev = credits:AddLabel("👤 Developer: Yusuf")
@@ -3635,7 +3609,7 @@ end)
 credits:AddLabel(" ")
 credits:AddLabel("==================================")
 
-local bigTitle = credits:AddLabel("🚀 SYNIOX HUB V3 🚀")
+local bigTitle = credits:AddLabel("🚀 SYNIOX CLAN V1 🚀")
 
 pcall(function()
     bigTitle.TextSize = 25
