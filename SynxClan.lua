@@ -519,7 +519,7 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-StrTab:AddButton("⚙️ Industrial Bar Lift", function()
+_G.StrTab:AddButton("⚙️ Industrial Bar Lift", function()
     local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-5492.24, 81.82, 4644.04)
@@ -536,7 +536,7 @@ StrTab:AddButton("⚙️ Industrial Bar Lift", function()
     end
 end)
 
-StrTab:AddButton("🦵 Industrial Squat", function()
+_G.StrTab:AddButton("🦵 Industrial Squat", function()
     local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
         character.HumanoidRootPart.CFrame = CFrame.new(-5216.36, 90.17, 5420.08)
@@ -577,7 +577,7 @@ _G.StrTab:AddButton("🐱 Equip Swift Samurai", function()
     end
 end)
 
-local AutoFarm = window:AddTab("Farm")
+local AutoFarm = window:AddTab("Main")
 AutoFarm:AddLabel("Tools Farm")
 
 local repsPerTick = 1
