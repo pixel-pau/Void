@@ -265,12 +265,12 @@ task.spawn(function()
     end
 end)
 
-rebirthTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+rebirthTab:AddButton("⚙️ Industrial Bar Lift", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        character.HumanoidRootPart.CFrame = CFrame.new(-5492.24, 81.82, 4644.04)
         task.wait(0.5)
-        local machine = findMachine("Jungle Bar Lift")
+        local machine = findMachine("Industrial Bar Lift")
         if machine and machine:FindFirstChild("interactSeat") then
             local retryCount = 0
             repeat
@@ -519,32 +519,36 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
-_G.StrTab:AddButton("🌴 Jungle Squat", function()
-    local character = player.Character
+StrTab:AddButton("⚙️ Industrial Bar Lift", function()
+    local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8377.55, 48.71, 2864.90)
+        character.HumanoidRootPart.CFrame = CFrame.new(-5492.24, 81.82, 4644.04)
         task.wait(0.5)
-        local machine = findMachine("Jungle Squat Rack") or findMachine("Squat Rack")
-        if machine and machine:FindFirstChild("interactSeat") then
-            local retry = 0
-            repeat task.wait(0.2); pressE(); retry = retry + 1 until (player.Character and player.Character.Humanoid.Sit) or retry > 10
-        end
-    end
-end)
-
-_G.StrTab:AddButton("🏋️‍♂️ Jungle Lift", function()
-    local character = player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
-        task.wait(0.5)
-        local machine = findMachine("Jungle Bar Lift")
+        local machine = _G.findMachine("Industrial Bar Lift")
         if machine and machine:FindFirstChild("interactSeat") then
             local retryCount = 0
             repeat
                 task.wait(0.2)
-                pressE()
+                _G.pressE()
                 retryCount = retryCount + 1
-            until (player.Character and player.Character.Humanoid.Sit) or retryCount > 10
+            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
+        end
+    end
+end)
+
+StrTab:AddButton("🦵 Industrial Squat", function()
+    local character = _G.player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(-5216.36, 90.17, 5420.08)
+        task.wait(0.5)
+        local machine = _G.findMachine("Industrial Squat")
+        if machine and machine:FindFirstChild("interactSeat") then
+            local retryCount = 0
+            repeat
+                task.wait(0.2)
+                _G.pressE()
+                retryCount = retryCount + 1
+            until (_G.player.Character and _G.player.Character.Humanoid.Sit) or retryCount > 10
         end
     end
 end)
@@ -2769,7 +2773,7 @@ task.spawn(function()
     end
 end)
 
-local autoEggSwitch = Misc:AddSwitch("Auto Egg", function(state)
+local autoEggSwitch = Misc:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
     running1 = state
     if state then
         useEggs()
