@@ -520,7 +520,7 @@ rebirths:AddSwitch("🔄 Auto Buy Selected", function(state)
     end
 end)
 
-local ProteinEggLabel = rebirth:AddLabel("Protein Eggs Owned: 0")
+local ProteinEggLabel = rebirths:AddLabel("Protein Eggs Owned: 0")
 ProteinEggLabel.TextSize = 14
 
 task.spawn(function()
@@ -538,7 +538,7 @@ task.spawn(function()
 	end
 end)
 
-local ProteinEggBoostLabel = rebirth:AddLabel("Protein Egg Boost: 00:00")
+local ProteinEggBoostLabel = rebirths:AddLabel("Protein Egg Boost: 00:00")
 ProteinEggBoostLabel.TextSize = 14
 
 local function formatTime(seconds)
@@ -594,7 +594,7 @@ task.spawn(function()
     end
 end)
 
-local autoEggSwitch = rebirth:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
+local autoEggSwitch = rebirths:AddSwitch("🥚 Auto Eat Egg 30 Min", function(state)
     running1 = state
     if state then
         useEggs()
