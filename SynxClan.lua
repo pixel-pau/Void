@@ -519,6 +519,48 @@ _G.StrTab:AddSwitch("Fast Rep", function(isEnabled)
     end
 end)
 
+local blockedFrames = {
+	"strengthFrame",
+	"durabilityFrame",
+	"agilityFrame",
+	"evilKarmaFrame",
+	"goodKarmaFrame",
+}
+
+local frameSwitch = _G.StrTab:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
+	if bool then
+		for _, name in ipairs(blockedFrames) do
+			local frame = _G.replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = false
+			end
+		end
+
+		if not _G.frameMonitorConnection then
+			_G.frameMonitorConnection = _G.replicatedStorage.ChildAdded:Connect(function(child)
+				for _, name in ipairs(blockedFrames) do
+					if child.Name == name and child:IsA("GuiObject") then
+						child.Visible = false
+					end
+				end
+			end)
+		end
+	else
+		for _, name in ipairs(blockedFrames) do
+			local frame = _G.replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = true
+			end
+		end
+
+		if _G.frameMonitorConnection then
+			_G.frameMonitorConnection:Disconnect()
+			_G.frameMonitorConnection = nil
+		end
+	end
+end)
+frameSwitch:Set(false)
+
 _G.StrTab:AddButton("⚙️ Industrial Bar Lift", function()
     local character = _G.player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
@@ -1032,27 +1074,47 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
-rebirths:AddSwitch("👁️‍🗨️ Hide Al Frames", function(bool)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not bool
-        end
-    end
-    
-    local playerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
-    if playerGui then
-        for _, gui in pairs(playerGui:GetChildren()) do
-            if gui:IsA("ScreenGui") then
-                for _, obj in pairs(gui:GetDescendants()) do
-                    if obj.Name:match("Frame$") then
-                        obj.Visible = not bool
-                    end
-                end
-            end
-        end
-    end
+local blockedFrames = {
+	"strengthFrame",
+	"durabilityFrame",
+	"agilityFrame",
+	"evilKarmaFrame",
+	"goodKarmaFrame",
+}
+
+local frameSwitch = rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
+	if bool then
+		for _, name in ipairs(blockedFrames) do
+			local frame = replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = false
+			end
+		end
+
+		if not _G.frameMonitorConnection then
+			_G.frameMonitorConnection = replicatedStorage.ChildAdded:Connect(function(child)
+				for _, name in ipairs(blockedFrames) do
+					if child.Name == name and child:IsA("GuiObject") then
+						child.Visible = false
+					end
+				end
+			end)
+		end
+	else
+		for _, name in ipairs(blockedFrames) do
+			local frame = replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = true
+			end
+		end
+
+		if _G.frameMonitorConnection then
+			_G.frameMonitorConnection:Disconnect()
+			_G.frameMonitorConnection = nil
+		end
+	end
 end)
+frameSwitch:Set(false)
 
 local selectedUltimate = nil
 local autoBuyActive = false
@@ -2821,6 +2883,48 @@ end
 Misc:AddButton("📦 Auto Claim Chest", function()
     claimChests()
 end)
+
+local blockedFrames = {
+	"strengthFrame",
+	"durabilityFrame",
+	"agilityFrame",
+	"evilKarmaFrame",
+	"goodKarmaFrame",
+}
+
+local frameSwitch = Misc:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
+	if bool then
+		for _, name in ipairs(blockedFrames) do
+			local frame = replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = false
+			end
+		end
+
+		if not _G.frameMonitorConnection then
+			_G.frameMonitorConnection = replicatedStorage.ChildAdded:Connect(function(child)
+				for _, name in ipairs(blockedFrames) do
+					if child.Name == name and child:IsA("GuiObject") then
+						child.Visible = false
+					end
+				end
+			end)
+		end
+	else
+		for _, name in ipairs(blockedFrames) do
+			local frame = replicatedStorage:FindFirstChild(name)
+			if frame and frame:IsA("GuiObject") then
+				frame.Visible = true
+			end
+		end
+
+		if _G.frameMonitorConnection then
+			_G.frameMonitorConnection:Disconnect()
+			_G.frameMonitorConnection = nil
+		end
+	end
+end)
+frameSwitch:Set(false)
 
 Misc:AddButton("🚀 FPS Booster", function()
     local lighting = game:GetService("Lighting")
