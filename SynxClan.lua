@@ -709,7 +709,7 @@ for _, loc in ipairs(Locations) do
 end
 
 AutoFarm:AddLabel("----------------------------")
-AutoFarm:AddLabel(" Industrial Jungle Gym Farm")
+AutoFarm:AddLabel("🕹️ Industrial Jungle Gym Farm")
 
 local VIM = game:GetService("VirtualInputManager")
 
@@ -1032,11 +1032,15 @@ local teleportSwitch = rebirths:AddSwitch("👑 Auto Teleport to Muscle King", f
     end
 end, "Tp to Mk")
 
-rebirths:AddSwitch("👁️‍🗨️ Hide All Frames", function(bool)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not bool
+rebirths:AddSwitch("👁️‍🗨️ Hide Al Frames", function(bool)
+    local player = game:GetService("Players").LocalPlayer
+    local playerGui = player:FindFirstChild("PlayerGui")
+    
+    if playerGui then
+        for _, gui in pairs(playerGui:GetChildren()) do
+            if gui:IsA("ScreenGui") then
+                gui.Enabled = not bool
+            end
         end
     end
 end)
