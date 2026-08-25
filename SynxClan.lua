@@ -209,6 +209,14 @@ local function doRebirth()
     local rebirths = rebirthsStat.Value
     local strengthTarget = 5000 + (rebirths * 2550)
 
+    local ultimatesFolder = player:FindFirstChild("ultimatesFolder")
+    if ultimatesFolder then
+        local goldenRebirth = ultimatesFolder:FindFirstChild("Golden Rebirth")
+        if goldenRebirth then
+            strengthTarget = math.floor(strengthTarget * (1 - (goldenRebirth.Value * 0.1)))
+        end
+    end
+
     while isRunning and leaderstats.Strength.Value < strengthTarget do
         local reps = player.MembershipType == Enum.MembershipType.Premium and 12 or 20
         for _ = 1, reps do
