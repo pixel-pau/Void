@@ -66,7 +66,7 @@ local rebirthCount = 0
 
 local paceHistoryHour, paceHistoryDay, paceHistoryWeek = {}, {}, {}
 local maxHistoryLength = 20
-local repSpeed = 350
+local repSpeed = 200
 local pingControl = true
 
 local timeLabel = RebTab:AddLabel("0d 0h 0m 0s - Paused")
@@ -90,7 +90,7 @@ local function equipUniquePet(name)
         for _, pet in pairs(player.petsFolder.Unique:GetChildren()) do
             if pet.Name == name then
                 rEvents.equipPetEvent:FireServer("equipPet", pet)
-                task.wait(0.01)
+                task.wait(0.05)
             end
         end
     end
@@ -160,17 +160,29 @@ local function getCurrentPing()
 end
 local function getAdaptiveSpeed(ping)
     if ping < 80 then
-        return 500
+        return 150
     elseif ping < 150 then
-        return 300
+        return 80
     elseif ping < 250 then
-        return 100
+        return 40
     else
-        return 50
+        return 20
     end
 end
 
-RebTab:AddLabel("-------------------------")
+RebTab:AddLabel("")
+RebTab:AddLabel("⚡ Ping Control:").TextSize = 17
+
+RebTab:AddTextBox("Rep Speed:", function(inputText)
+    local speedValue = tonumber(inputText)
+    if speedValue then
+        repSpeed = math.clamp(math.floor(speedValue), 1, 200)
+    end
+end)
+
+RebTab:AddSwitch("Controlled Speed", function(isEnabled)
+    pingControl = isEnabled
+end):Set(true)
 
 RebTab:AddSwitch("🔄 Auto Rebirth Farm", function(state)
     isRunning = state
@@ -179,7 +191,7 @@ RebTab:AddSwitch("🔄 Auto Rebirth Farm", function(state)
         task.spawn(function()
             while isRunning do
                 local rebirths = rebirthsStat.Value
-                local strengthTarget = 5000 + (rebirths * 2550)
+                local strengthTarget = 5000 + (rebirths * 2000)
                 local ultimatesFolder = player:FindFirstChild("ultimatesFolder")
                 if ultimatesFolder then
                     local goldenRebirth = ultimatesFolder:FindFirstChild("Golden Rebirth")
@@ -195,41 +207,50 @@ RebTab:AddSwitch("🔄 Auto Rebirth Farm", function(state)
                 while isRunning and leaderstats.Strength.Value < strengthTarget do
                     local ping = getCurrentPing()
                     local repsToFire = pingControl and getAdaptiveSpeed(ping) or repSpeed
-                    local reps = math.min(repsToFire, 1000)
-                    for i = 1, reps do
+                    for i = 1, math.min(repsToFire, 50) do
                         if not isRunning then break end
                         muscleEvent:FireServer("rep")
-                        if i % 500 == 0 then task.wait() end
+                        task.wait(0.005)
                     end
-                    task.wait(0.01)
+                    task.wait(0.05)
                 end
                 if not isRunning then break end
 
                 unequipAllPets()
                 task.wait(0.1)
                 equipUniquePet("Tribal Overlord")
+
                 local machine = findMachine("Jungle Bar Lift")
                 if machine and machine:FindFirstChild("interactSeat") then
-                    player.Character.HumanoidRootPart.CFrame = machine.interactSeat.CFrame * CFrame.new(0, 3, 0)
-                    local r = 0
-                    repeat
-                        task.wait(0.2)
+                    pcall(function()
+                        player.Character.HumanoidRootPart.CFrame = machine.interactSeat.CFrame * CFrame.new(0, 3, 0)
+                        task.wait(0.5)
                         pressE()
-                        r = r + 1
-                    until (player.Character and player.Character.Humanoid.Sit) or r > 20 or not isRunning
+                    end)
                 end
 
                 local before = rebirthsStat.Value
+                local attempts = 0
                 repeat
                     rEvents.rebirthRemote:InvokeServer("rebirthRequest")
                     task.wait(0.5)
-                until rebirthsStat.Value > before or not isRunning
+                    attempts = attempts + 1
+                until rebirthsStat.Value > before or attempts > 3 or not isRunning
+
+                if rebirthsStat.Value == before and isRunning then
+                    rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    task.wait(0.5)
+                end
+
+                task.wait(0.3)
             end
         end)
     else
         totalElapsed = totalElapsed + (tick() - startTime)
     end
 end)
+
+RebTab:AddLabel("-------------------------")
 
 rebirthsStat:GetPropertyChangedSignal("Value"):Connect(function()
     calculatePaceOnRebirth()
@@ -242,22 +263,6 @@ task.spawn(function()
         task.wait(1)
     end
 end)
-
-RebTab:AddLabel("")
-RebTab:AddLabel("⚡ Ping Control:").TextSize = 17
-
-RebTab:AddTextBox("Rep Speed:", function(inputText)
-    local speedValue = tonumber(inputText)
-    if speedValue then
-        repSpeed = math.clamp(math.floor(speedValue), 1, 1000)
-    end
-end)
-
-RebTab:AddSwitch("Controlled Speed", function(isEnabled)
-    pingControl = isEnabled
-end):Set(true)
-
-RebTab:AddLabel("-------------------------")
 
 RebTab:AddButton("⚙️ Industrial Bar Lift", function()
     local character = player.Character
