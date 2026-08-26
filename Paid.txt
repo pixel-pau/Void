@@ -58,14 +58,14 @@ local rebirthCount = 0
 local paceHistoryHour, paceHistoryDay, paceHistoryWeek = {}, {}, {}
 local maxHistoryLength = 20
 
-local function formatNumber(num)
-    if num >= 1e15 then return string.format("%.2fQ", num/1e15) end
-    if num >= 1e12 then return string.format("%.2fT", num/1e12) end
-    if num >= 1e9 then return string.format("%.2fB", num/1e9) end
-    if num >= 1e6 then return string.format("%.2fM", num/1e6) end
-    if num >= 1e3 then return string.format("%.2fK", num/1e3) end
-    return string.format("%.0f", num)
-end
+local repSpeed = 350
+local pingControl = true
+
+local timeLabel = RebTab:AddLabel("0d 0h 0m 0s - Paused")
+timeLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+local paceLabel = RebTab:AddLabel("Pace: 0 / Hour | 0 / Day | 0 / Week")
+local averagePaceLabel = RebTab:AddLabel("Average Pace: 0 / Hour | 0 / Day | 0 / Week")
+local rebirthsStatsLabel = RebTab:AddLabel("Rebirths: "..formatNumber(rebirthsStat.Value).." | Gained: 0")
 
 local function unequipAllPets()
     if player:FindFirstChild("petsFolder") then
@@ -82,7 +82,7 @@ local function equipUniquePet(name)
         for _, pet in pairs(player.petsFolder.Unique:GetChildren()) do
             if pet.Name == name then
                 rEvents.equipPetEvent:FireServer("equipPet", pet)
-                task.wait(0.01) 
+                task.wait(0.01)
             end
         end
     end
@@ -107,12 +107,6 @@ local function pressE()
     VirtualInputManager:SendKeyEvent(false, "E", false, game)
 end
 
-local timeLabel = RebTab:AddLabel("0d 0h 0m 0s - Paused")
-timeLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-local paceLabel = RebTab:AddLabel("Pace: 0 / Hour | 0 / Day | 0 / Week")
-local averagePaceLabel = RebTab:AddLabel("Average Pace: 0 / Hour | 0 / Day | 0 / Week")
-local rebirthsStatsLabel = RebTab:AddLabel("Rebirths: "..formatNumber(rebirthsStat.Value).." | Gained: 0")
-
 local function updateUI()
     local currentTime = tick()
     local elapsed = isRunning and (currentTime - startTime + totalElapsed) or totalElapsed
@@ -120,7 +114,7 @@ local function updateUI()
     local hours = math.floor((elapsed % 86400) / 3600)
     local minutes = math.floor((elapsed % 3600) / 60)
     local seconds = math.floor(elapsed % 60)
-    
+
     timeLabel.Text = string.format("%dd %dh %dm %ds - %s", days, hours, minutes, seconds, isRunning and "Rebirthing" or "Paused")
     timeLabel.TextColor3 = isRunning and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
 end
@@ -152,6 +146,22 @@ local function calculatePaceOnRebirth()
     end
 end
 
+local networkStats = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]
+local function getCurrentPing()
+    return networkStats:GetValue()
+end
+local function getAdaptiveSpeed(ping)
+    if ping < 80 then
+        return 500
+    elseif ping < 150 then
+        return 300
+    elseif ping < 250 then
+        return 100
+    else
+        return 50
+    end
+end
+
 RebTab:AddLabel("-------------------------")
 
 RebTab:AddSwitch("🔄 Auto Rebirth Farm", function(state)
@@ -160,29 +170,52 @@ RebTab:AddSwitch("🔄 Auto Rebirth Farm", function(state)
         startTime = tick()
         task.spawn(function()
             while isRunning do
-                local cReb = rebirthsStat.Value
-                local cost = 10000 + (5000 * cReb)
-                if player.ultimatesFolder:FindFirstChild("Golden Rebirth") then
-                    cost = math.floor(cost * (1 - (player.ultimatesFolder["Golden Rebirth"].Value * 0.1)))
+                local rebirths = rebirthsStat.Value
+                local strengthTarget = 5000 + (rebirths * 2550)
+                local ultimatesFolder = player:FindFirstChild("ultimatesFolder")
+                if ultimatesFolder then
+                    local goldenRebirth = ultimatesFolder:FindFirstChild("Golden Rebirth")
+                    if goldenRebirth then
+                        strengthTarget = math.floor(strengthTarget * (1 - (goldenRebirth.Value * 0.1)))
+                    end
                 end
+
                 unequipAllPets()
                 task.wait(0.1)
                 equipUniquePet("Swift Samurai")
-                while isRunning and player.leaderstats.Strength.Value < cost do
-                    for i = 1, 12 do muscleEvent:FireServer("rep") end
+
+                while isRunning and leaderstats.Strength.Value < strengthTarget do
+                    local ping = getCurrentPing()
+                    local repsToFire = pingControl and getAdaptiveSpeed(ping) or repSpeed
+                    local reps = math.min(repsToFire, 1000)
+                    for i = 1, reps do
+                        if not isRunning then break end
+                        muscleEvent:FireServer("rep")
+                        if i % 500 == 0 then task.wait() end
+                    end
                     task.wait(0.01)
                 end
                 if not isRunning then break end
+
                 unequipAllPets()
                 task.wait(0.1)
                 equipUniquePet("Tribal Overlord")
                 local machine = findMachine("Jungle Bar Lift")
                 if machine and machine:FindFirstChild("interactSeat") then
                     player.Character.HumanoidRootPart.CFrame = machine.interactSeat.CFrame * CFrame.new(0, 3, 0)
-                    local r = 0 repeat task.wait(0.2) pressE() r = r + 1 until (player.Character and player.Character.Humanoid.Sit) or r > 20 or not isRunning
+                    local r = 0
+                    repeat
+                        task.wait(0.2)
+                        pressE()
+                        r = r + 1
+                    until (player.Character and player.Character.Humanoid.Sit) or r > 20 or not isRunning
                 end
-                local b = rebirthsStat.Value
-                repeat rEvents.rebirthRemote:InvokeServer("rebirthRequest") task.wait(0.5) until rebirthsStat.Value > b or not isRunning
+
+                local before = rebirthsStat.Value
+                repeat
+                    rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    task.wait(0.5)
+                until rebirthsStat.Value > before or not isRunning
             end
         end)
     else
@@ -196,15 +229,34 @@ rebirthsStat:GetPropertyChangedSignal("Value"):Connect(function()
 end)
 
 task.spawn(function()
-    while true do updateUI() task.wait(1) end
+    while true do
+        updateUI()
+        task.wait(1)
+    end
 end)
 
-RebTab:AddButton("🏋️‍♂️ Jungle Lift", function()
+RebTab:AddLabel("")
+RebTab:AddLabel("⚡ Ping Control:").TextSize = 17
+
+RebTab:AddTextBox("Rep Speed:", function(inputText)
+    local speedValue = tonumber(inputText)
+    if speedValue then
+        repSpeed = math.clamp(math.floor(speedValue), 1, 1000)
+    end
+end)
+
+RebTab:AddSwitch("Controlled Speed", function(isEnabled)
+    pingControl = isEnabled
+end):Set(true)
+
+RebTab:AddLabel("-------------------------")
+
+RebTab:AddButton("⚙️ Industrial Bar Lift", function()
     local character = player.Character
     if character and character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.CFrame = CFrame.new(-8666, 34, 2070)
+        character.HumanoidRootPart.CFrame = CFrame.new(-5492.24, 81.82, 4644.04)
         task.wait(0.5)
-        local machine = findMachine("Jungle Bar Lift")
+        local machine = findMachine("Industrial Bar Lift")
         if machine and machine:FindFirstChild("interactSeat") then
             local retryCount = 0
             repeat
@@ -218,20 +270,13 @@ end)
 
 RebTab:AddButton("🏴 Full FPS Boost", function()
     local lighting = game:GetService("Lighting")
-    local players = game:GetService("Players")
-    local lp = players.LocalPlayer
-
     lighting.Brightness = 0
     lighting.ClockTime = 0
     lighting.GlobalShadows = false
     lighting.ExposureCompensation = -10
     lighting.OutdoorAmbient = Color3.new(0, 0, 0)
     lighting.Ambient = Color3.new(0, 0, 0)
-    
-    for _, v in pairs(lighting:GetChildren()) do
-        v:Destroy()
-    end
-
+    for _, v in pairs(lighting:GetChildren()) do v:Destroy() end
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") then
             obj.Color = Color3.new(0, 0, 0)
@@ -242,9 +287,8 @@ RebTab:AddButton("🏴 Full FPS Boost", function()
             obj:Destroy()
         end
     end
-
-    if lp and lp:FindFirstChild("PlayerGui") then
-        for _, gui in pairs(lp.PlayerGui:GetChildren()) do
+    if player and player:FindFirstChild("PlayerGui") then
+        for _, gui in pairs(player.PlayerGui:GetChildren()) do
             if gui:IsA("ScreenGui") and gui.Name ~= "TouchGui" then
                 gui.Enabled = false
             end
