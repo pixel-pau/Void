@@ -2315,7 +2315,13 @@ local petList = {
     "Ultimate Supernova Pegasus (Unique)",
     "Titan Reactor (Unique)",
     "Neon Guardian (Unique)",
-    "Apex Overlord (Unique)"
+    "Apex Overlord (Unique)",
+    "Volt Wolf (Basic)",
+    "Core Golem (Advanced)",
+    "Plasma Jelly (Rare)",
+    "Surge Tiger (Epic)",
+    "Shard Dragon (Legendary)",
+    "Nova Phoenix (Unique)"
 }
 
 for _, petName in ipairs(petList) do
