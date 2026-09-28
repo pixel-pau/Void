@@ -1138,21 +1138,43 @@ Tabs.Kill:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
     task.spawn(function()
         while State.AutoKill do
             local char = PlayerData.Player.Character
-            local rHand = char and char:FindFirstChild("RightHand")
-            if rHand then
-                for _, target in ipairs(Services.Players:GetPlayers()) do
-                    if target ~= PlayerData.Player and not playerWhitelist[target.Name] then
-                        local root = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
-                        if root then
-                            pcall(function()
-                                firetouchinterest(rHand, root, 1)
-                                firetouchinterest(rHand, root, 0)
-                            end)
+            if char and char:FindFirstChildOfClass("Humanoid") and char.Humanoid.Health > 0 then
+                
+                -- Elindeki Tool'u bul veya Envanterden Yumruğu Otomatik Giydir
+                local tool = char:FindFirstChildOfClass("Tool") or PlayerData.Player.Backpack:FindFirstChildOfClass("Tool")
+                if tool and tool.Parent ~= char then
+                    char.Humanoid:EquipTool(tool)
+                end
+
+                -- Hasar veren parçayı belirle (Tool varsa Handle/Hitbox, yoksa RightHand)
+                local touchPart = (tool and (tool:FindFirstChild("Handle") or tool:FindFirstChild("Hitbox"))) 
+                                  or char:FindFirstChild("RightHand") 
+                                  or char:FindFirstChild("Right Arm")
+
+                if touchPart then
+                    for _, target in ipairs(Services.Players:GetPlayers()) do
+                        if target ~= PlayerData.Player and not playerWhitelist[target.Name] then
+                            local tChar = target.Character
+                            local root = tChar and tChar:FindFirstChild("HumanoidRootPart")
+                            local tHum = tChar and tChar:FindFirstChildOfClass("Humanoid")
+
+                            if root and tHum and tHum.Health > 0 then
+                                -- Oyun sunucusunun CFrame mesafe denetimini bypass etmek için
+                                pcall(function()
+                                    -- Tool'u tetikle (Tıklama simülasyonu)
+                                    if tool then tool:Activate() end
+                                    
+                                    -- Çift yönlü Touch tetiklemesi
+                                    firetouchinterest(touchPart, root, 0)
+                                    firetouchinterest(touchPart, root, 1)
+                                    firetouchinterest(touchPart, root, 0)
+                                end)
+                            end
                         end
                     end
                 end
             end
-            task.wait(0.01)
+            task.wait(0.05)
         end
     end)
 end)
