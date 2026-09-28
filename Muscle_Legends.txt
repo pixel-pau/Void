@@ -2176,14 +2176,13 @@ local stopwatchLabel = Tabs.FastFarming:AddLabel("0d 0h 0m 0s - Fast Rep Inactiv
 stopwatchLabel.TextSize = 15
 stopwatchLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
 
-local projectedStrengthLabel = Tabs.FastFarming:AddLabel("Strength: /Hour | /Day | /Week")
+local projectedStrengthLabel = Tabs.FastFarming:AddLabel("Strength: /Min | /Hour | /Day | /Week")
 projectedStrengthLabel.TextSize = 15
-local averageStrengthLabel = Tabs.FastFarming:AddLabel("Average: /Hour | /Day | /Week")
+local averageStrengthLabel = Tabs.FastFarming:AddLabel("Average: /Min | /Hour | /Day | /Week")
 averageStrengthLabel.TextSize = 15
-Tabs.FastFarming:AddLabel("")
-local projectedDurabilityLabel = Tabs.FastFarming:AddLabel("Dura: /Hour | /Day | /Week")
+local projectedDurabilityLabel = Tabs.FastFarming:AddLabel("Dura: /Min | /Hour | /Day | /Week")
 projectedDurabilityLabel.TextSize = 15
-local averageDurabilityLabel = Tabs.FastFarming:AddLabel("Average: /Hour | /Day | /Week")
+local averageDurabilityLabel = Tabs.FastFarming:AddLabel("Average: /Min | /Hour | /Day | /Week")
 averageDurabilityLabel.TextSize = 15
 Tabs.FastFarming:AddLabel("")
 
@@ -2194,7 +2193,6 @@ durabilityLabel.TextSize = 15
 
 local startTime = 0
 local pausedElapsedTime = 0
-local lastPauseTime = 0
 
 local runFastRep = false
 local trackingStarted = false
@@ -2206,16 +2204,22 @@ local calculationInterval = 10
 local initialStrength = strengthStat.Value
 local initialDurability = durabilityStat.Value
 
+local savedStrengthPerMin = 0
 local savedStrengthPerHour = 0
 local savedStrengthPerDay = 0
 local savedStrengthPerWeek = 0
+
+local savedDurabilityPerMin = 0
 local savedDurabilityPerHour = 0
 local savedDurabilityPerDay = 0
 local savedDurabilityPerWeek = 0
 
+local savedAvgStrengthPerMin = 0
 local savedAvgStrengthPerHour = 0
 local savedAvgStrengthPerDay = 0
 local savedAvgStrengthPerWeek = 0
+
+local savedAvgDurabilityPerMin = 0
 local savedAvgDurabilityPerHour = 0
 local savedAvgDurabilityPerDay = 0
 local savedAvgDurabilityPerWeek = 0
@@ -2238,10 +2242,10 @@ task.spawn(function()
                 durabilityHistory = {}
                 
                 if savedStrengthPerHour > 0 then
-                    projectedStrengthLabel.Text = "Strength: " .. formatNumber(savedStrengthPerHour) .. "/Hour | " .. formatNumber(savedStrengthPerDay) .. "/Day | " .. formatNumber(savedStrengthPerWeek) .. "/Week"
-                    projectedDurabilityLabel.Text = "Dura: " .. formatNumber(savedDurabilityPerHour) .. "/Hour | " .. formatNumber(savedDurabilityPerDay) .. "/Day | " .. formatNumber(savedDurabilityPerWeek) .. "/Week"
-                    averageStrengthLabel.Text = "Average: " .. formatNumber(savedAvgStrengthPerHour) .. "/Hour | " .. formatNumber(savedAvgStrengthPerDay) .. "/Day | " .. formatNumber(savedAvgStrengthPerWeek) .. "/Week"
-                    averageDurabilityLabel.Text = "Average: " .. formatNumber(savedAvgDurabilityPerHour) .. "/Hour | " .. formatNumber(savedAvgDurabilityPerDay) .. "/Day | " .. formatNumber(savedAvgDurabilityPerWeek) .. "/Week"
+                    projectedStrengthLabel.Text = "Strength: " .. formatNumber(savedStrengthPerMin) .. "/Min | " .. formatNumber(savedStrengthPerHour) .. "/Hour | " .. formatNumber(savedStrengthPerDay) .. "/Day | " .. formatNumber(savedStrengthPerWeek) .. "/Week"
+                    projectedDurabilityLabel.Text = "Dura: " .. formatNumber(savedDurabilityPerMin) .. "/Min | " .. formatNumber(savedDurabilityPerHour) .. "/Hour | " .. formatNumber(savedDurabilityPerDay) .. "/Day | " .. formatNumber(savedDurabilityPerWeek) .. "/Week"
+                    averageStrengthLabel.Text = "Average: " .. formatNumber(savedAvgStrengthPerMin) .. "/Min | " .. formatNumber(savedAvgStrengthPerHour) .. "/Hour | " .. formatNumber(savedAvgStrengthPerDay) .. "/Day | " .. formatNumber(savedAvgStrengthPerWeek) .. "/Week"
+                    averageDurabilityLabel.Text = "Average: " .. formatNumber(savedAvgDurabilityPerMin) .. "/Min | " .. formatNumber(savedAvgDurabilityPerHour) .. "/Hour | " .. formatNumber(savedAvgDurabilityPerDay) .. "/Day | " .. formatNumber(savedAvgDurabilityPerWeek) .. "/Week"
                 end
             end
             
@@ -2269,34 +2273,38 @@ task.spawn(function()
                 if #strengthHistory >= 2 then
                     local strengthDelta = strengthHistory[#strengthHistory].value - strengthHistory[1].value
                     local strengthPerSecond = strengthDelta / calculationInterval
+                    savedStrengthPerMin = strengthPerSecond * 60
                     savedStrengthPerHour = strengthPerSecond * 3600
                     savedStrengthPerDay = strengthPerSecond * 86400
                     savedStrengthPerWeek = strengthPerSecond * 604800
-                    projectedStrengthLabel.Text = "Strength: " .. formatNumber(savedStrengthPerHour) .. "/Hour | " .. formatNumber(savedStrengthPerDay) .. "/Day | " .. formatNumber(savedStrengthPerWeek) .. "/Week"
+                    projectedStrengthLabel.Text = "Strength: " .. formatNumber(savedStrengthPerMin) .. "/Min | " .. formatNumber(savedStrengthPerHour) .. "/Hour | " .. formatNumber(savedStrengthPerDay) .. "/Day | " .. formatNumber(savedStrengthPerWeek) .. "/Week"
                 end
 
                 if #durabilityHistory >= 2 then
                     local durabilityDelta = durabilityHistory[#durabilityHistory].value - durabilityHistory[1].value
                     local durabilityPerSecond = durabilityDelta / calculationInterval
+                    savedDurabilityPerMin = durabilityPerSecond * 60
                     savedDurabilityPerHour = durabilityPerSecond * 3600
                     savedDurabilityPerDay = durabilityPerSecond * 86400
                     savedDurabilityPerWeek = durabilityPerSecond * 604800
-                    projectedDurabilityLabel.Text = "Dura: " .. formatNumber(savedDurabilityPerHour) .. "/Hour | " .. formatNumber(savedDurabilityPerDay) .. "/Day | " .. formatNumber(savedDurabilityPerWeek) .. "/Week"
+                    projectedDurabilityLabel.Text = "Dura: " .. formatNumber(savedDurabilityPerMin) .. "/Min | " .. formatNumber(savedDurabilityPerHour) .. "/Hour | " .. formatNumber(savedDurabilityPerDay) .. "/Day | " .. formatNumber(savedDurabilityPerWeek) .. "/Week"
                 end
 
                 local totalElapsed = pausedElapsedTime + (currentTime - startTime)
                 if totalElapsed > 0 then
                     local avgStrengthPerSecond = (currentStrength - initialStrength) / totalElapsed
+                    savedAvgStrengthPerMin = avgStrengthPerSecond * 60
                     savedAvgStrengthPerHour = avgStrengthPerSecond * 3600
                     savedAvgStrengthPerDay = avgStrengthPerSecond * 86400
                     savedAvgStrengthPerWeek = avgStrengthPerSecond * 604800
-                    averageStrengthLabel.Text = "Average: " .. formatNumber(savedAvgStrengthPerHour) .. "/Hour | " .. formatNumber(savedAvgStrengthPerDay) .. "/Day | " .. formatNumber(savedAvgStrengthPerWeek) .. "/Week"
+                    averageStrengthLabel.Text = "Average: " .. formatNumber(savedAvgStrengthPerMin) .. "/Min | " .. formatNumber(savedAvgStrengthPerHour) .. "/Hour | " .. formatNumber(savedAvgStrengthPerDay) .. "/Day | " .. formatNumber(savedAvgStrengthPerWeek) .. "/Week"
 
                     local avgDurabilityPerSecond = (currentDurability - initialDurability) / totalElapsed
+                    savedAvgDurabilityPerMin = avgDurabilityPerSecond * 60
                     savedAvgDurabilityPerHour = avgDurabilityPerSecond * 3600
                     savedAvgDurabilityPerDay = avgDurabilityPerSecond * 86400
                     savedAvgDurabilityPerWeek = avgDurabilityPerSecond * 604800
-                    averageDurabilityLabel.Text = "Average: " .. formatNumber(savedAvgDurabilityPerHour) .. "/Hour | " .. formatNumber(savedAvgDurabilityPerDay) .. "/Day | " .. formatNumber(savedAvgDurabilityPerWeek) .. "/Week"
+                    averageDurabilityLabel.Text = "Average: " .. formatNumber(savedAvgDurabilityPerMin) .. "/Min | " .. formatNumber(savedAvgDurabilityPerHour) .. "/Hour | " .. formatNumber(savedAvgDurabilityPerDay) .. "/Day | " .. formatNumber(savedAvgDurabilityPerWeek) .. "/Week"
                 end
             end
         else
@@ -2360,39 +2368,45 @@ Tabs.FastFarming:AddSwitch("Controlled Speed", function(isEnabled)
     pingControl = isEnabled
 end):Set(true)
 
+local autoRepThread = nil
+
 local function startAutoRep()
-    local lastPingUpdate = time()
-    local currentPing = getCurrentPing()
-    while farmRunning do
-        if time() - lastPingUpdate > 0.5 then
-            currentPing = getCurrentPing()
-            lastPingUpdate = time()
-        end
-        local repsToFire = pingControl and getAdaptiveSpeed(currentPing) or repSpeed
-        local delayBetweenBatches = math.clamp(currentPing / 2500, 0.001, 0.1)
-        for repCount = 1, math.min(repsToFire, repSpeed) do
-            PlayerData.Player.muscleEvent:FireServer("rep")
-            if repCount % 500 == 0 then
-                task.wait(0)
+    autoRepThread = task.spawn(function()
+        local lastPingUpdate = time()
+        local currentPing = getCurrentPing()
+        while farmRunning do
+            if time() - lastPingUpdate > 0.5 then
+                currentPing = getCurrentPing()
+                lastPingUpdate = time()
             end
+            local repsToFire = pingControl and getAdaptiveSpeed(currentPing) or repSpeed
+            local delayBetweenBatches = math.clamp(currentPing / 2500, 0.001, 0.1)
+            for repCount = 1, math.min(repsToFire, repSpeed) do
+                PlayerData.Player.muscleEvent:FireServer("rep")
+                if repCount % 500 == 0 then
+                    task.wait(0)
+                end
+            end
+            task.wait(delayBetweenBatches)
         end
-        task.wait(delayBetweenBatches)
-    end
+    end)
 end
 
 Tabs.FastFarming:AddSwitch("💪 Fast Rep", function(isEnabled)
     farmRunning = isEnabled
     if farmRunning then
         runFastRep = true
-        task.spawn(startAutoRep)
+        startAutoRep()
     else 
         runFastRep = false
-        task.cancel(startAutoRep)
+        if autoRepThread then
+            task.cancel(autoRepThread)
+            autoRepThread = nil
+        end
     end
 end)
 
-Tabs.FastFarming:AddLabel("❤️ This Tab Made ByHenne").TextSize = 15
-
+Tabs.FastFarming:AddLabel("❤️ This Tab Made ByHenne And RuLing").TextSize = 15
 Tabs.FastFarming:AddLabel("👾 Performance").TextSize = 21
 
 Tabs.FastFarming:AddButton("🏴 Full FPS Boost", function()
@@ -2404,7 +2418,11 @@ Tabs.FastFarming:AddButton("🏴 Full FPS Boost", function()
     end
     lighting.Brightness = 0
     lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-    for _, v in pairs(lighting:GetChildren()) do if v:IsA("Sky") then v:Destroy() end end
+    for _, v in pairs(lighting:GetChildren()) do 
+        if v:IsA("Sky") then 
+            v:Destroy() 
+        end 
+    end
 end)
 
 Tabs.Boss:AddLabel("👊 Boss Farm")
