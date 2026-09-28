@@ -1761,6 +1761,8 @@ end)
 Tabs.FastFarming:AddLabel("🔄 Fast Rebirth").TextSize = 19
 Tabs.FastFarming:AddLabel("----------------------------")
 
+local FastFarming = Tabs.FastFarming
+
 local PETS = {
     ["Omega Overlord"] = {
         repSpeed = 20,
