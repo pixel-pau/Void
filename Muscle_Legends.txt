@@ -1133,43 +1133,36 @@ Tabs.Kill:AddSwitch("🛡️ Auto Whitelist Friends", function(state)
     end
 end)
 
-Tabs.Kill:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
+Tabs.Kill:AddSwitch("⚔️ Auto Kill All (Range Bypass)", function(bool)
     State.AutoKill = bool
     task.spawn(function()
         while State.AutoKill do
             local char = PlayerData.Player.Character
-            if char and char:FindFirstChildOfClass("Humanoid") and char.Humanoid.Health > 0 then
-                
-                -- Elindeki Tool'u bul veya Envanterden Yumruğu Otomatik Giydir
-                local tool = char:FindFirstChildOfClass("Tool") or PlayerData.Player.Backpack:FindFirstChildOfClass("Tool")
-                if tool and tool.Parent ~= char then
-                    char.Humanoid:EquipTool(tool)
-                end
+            local myRoot = char and char:FindFirstChild("HumanoidRootPart")
+            local rHand = char and char:FindFirstChild("RightHand") or char:FindFirstChild("Right Arm")
 
-                -- Hasar veren parçayı belirle (Tool varsa Handle/Hitbox, yoksa RightHand)
-                local touchPart = (tool and (tool:FindFirstChild("Handle") or tool:FindFirstChild("Hitbox"))) 
-                                  or char:FindFirstChild("RightHand") 
-                                  or char:FindFirstChild("Right Arm")
+            if char and myRoot and rHand and char:FindFirstChildOfClass("Humanoid").Health > 0 then
+                for _, target in ipairs(Services.Players:GetPlayers()) do
+                    if target ~= PlayerData.Player and not playerWhitelist[target.Name] then
+                        local tChar = target.Character
+                        local tRoot = tChar and tChar:FindFirstChild("HumanoidRootPart")
+                        local tHum = tChar and tChar:FindFirstChildOfClass("Humanoid")
 
-                if touchPart then
-                    for _, target in ipairs(Services.Players:GetPlayers()) do
-                        if target ~= PlayerData.Player and not playerWhitelist[target.Name] then
-                            local tChar = target.Character
-                            local root = tChar and tChar:FindFirstChild("HumanoidRootPart")
-                            local tHum = tChar and tChar:FindFirstChildOfClass("Humanoid")
+                        if tRoot and tHum and tHum.Health > 0 then
+                            -- Mevcut konumunu kaydet
+                            local oldCFrame = myRoot.CFrame
 
-                            if root and tHum and tHum.Health > 0 then
-                                -- Oyun sunucusunun CFrame mesafe denetimini bypass etmek için
-                                pcall(function()
-                                    -- Tool'u tetikle (Tıklama simülasyonu)
-                                    if tool then tool:Activate() end
-                                    
-                                    -- Çift yönlü Touch tetiklemesi
-                                    firetouchinterest(touchPart, root, 0)
-                                    firetouchinterest(touchPart, root, 1)
-                                    firetouchinterest(touchPart, root, 0)
-                                end)
-                            end
+                            -- Sunucunun mesafeyi onaylaması için anlık TP at ve dokun
+                            pcall(function()
+                                myRoot.CFrame = tRoot.CFrame * CFrame.new(0, 0, 1) -- Adamın 1 stud dibine gir
+                                task.wait() -- Sunucunun pozisyonu işlemesi için minik bekleme
+                                
+                                firetouchinterest(rHand, tRoot, 0)
+                                firetouchinterest(rHand, tRoot, 1)
+                                firetouchinterest(rHand, tRoot, 0)
+
+                                myRoot.CFrame = oldCFrame -- Anında eski yerine dön
+                            end)
                         end
                     end
                 end
