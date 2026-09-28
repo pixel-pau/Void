@@ -2348,7 +2348,7 @@ end)
 Tabs.FastFarming:AddLabel("")
 Tabs.FastFarming:AddLabel("⚡ Fast Farm:").TextSize = 17
 local farmRunning = false
-local repSpeed = 350
+local repSpeed = 400
 local pingControl = true
 
 local networkStats = Services.Stats.Network.ServerStatsItem["Data Ping"]
