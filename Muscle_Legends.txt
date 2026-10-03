@@ -469,7 +469,7 @@ local targetSwitch = Tabs.Rebirths:AddSwitch("🔄 Auto Rebirth Target", functio
         end
         
         task.spawn(function()
-            while State.targetRebirthActive and task.wait(0.1) do
+            while State.targetRebirthActive do
                 local currentRebirths = PlayerData.Player.leaderstats.Rebirths.Value
                 
                 if currentRebirths >= State.targetRebirthValue then
@@ -484,7 +484,11 @@ local targetSwitch = Tabs.Rebirths:AddSwitch("🔄 Auto Rebirth Target", functio
                     break
                 end
                 
-                Services.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                pcall(function()
+                    Services.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                end)
+                
+                task.wait(0.01)
             end
         end)
     end
@@ -500,8 +504,12 @@ infiniteSwitch = Tabs.Rebirths:AddSwitch("♾️ Auto Rebirth (Infinitely)", fun
         end
         
         task.spawn(function()
-            while State.infiniteRebirthActive and task.wait(0.1) do
-                Services.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+            while State.infiniteRebirthActive do
+                pcall(function()
+                    Services.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                end)
+                
+                task.wait(0.01)
             end
         end)
     end
