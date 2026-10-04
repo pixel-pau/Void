@@ -2117,7 +2117,7 @@ FastFarming.equipRebirthPets = function()
 end
 
 FastFarming.performRebirth = function()
-    FastFarming.strengthTarget = 5000 + FastFarming.rebirths.Value * 2550
+    FastFarming.strengthTarget = 5000 + FastFarming.rebirths.Value * 2510
     FastFarming.repsPerBurst = game:GetService("Players").LocalPlayer.MembershipType == Enum.MembershipType.Premium and 6 or 12
 
     FastFarming.repIndex = 1
@@ -2137,7 +2137,7 @@ FastFarming.performRebirth = function()
 
         repeat
             game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
-            task.wait(0.05)
+            task.wait(0.01)
         until FastFarming.rebirths.Value > FastFarming.rebirthValueBefore or not FastFarming.running
     end
 end
