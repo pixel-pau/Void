@@ -2971,22 +2971,23 @@ Tabs.Pets.AlienShop.updateSelectedLabel()
 
 Tabs.Pets.AlienShop.buyItem = function(internalName)
 	pcall(function()
-		local packages = Services.ReplicatedStorage:FindFirstChild("packages")
-		local net = packages and packages:FindFirstChild("net")
-		local rf = net and net:FindFirstChild("RF")
-		local alienShopRemote = rf and rf:FindFirstChild("AlienShop")
+		local rEvents = Services.ReplicatedStorage:FindFirstChild("rEvents")
+		
+		-- 1. purchaseEvent üzerinden satın almayı dene
+		local purchaseEvent = rEvents and rEvents:FindFirstChild("purchaseEvent")
+		if purchaseEvent then
+			purchaseEvent:FireServer("alienShop", internalName)
+		end
 
-		if alienShopRemote then
-			if alienShopRemote:IsA("RemoteFunction") then
-				alienShopRemote:InvokeServer(internalName)
-			elseif alienShopRemote:IsA("RemoteEvent") then
-				alienShopRemote:FireServer(internalName)
-			end
+		-- 2. Eğer alternatif bir shop event'i varsa
+		local alienShopEvent = rEvents and (rEvents:FindFirstChild("AlienShop") or rEvents:FindFirstChild("clanShopRemote"))
+		if alienShopEvent then
+			alienShopEvent:FireServer(internalName)
 		end
 	end)
 end
 
-Tabs.Pets.AlienShop.AutoBuySwitch = Tabs.Pets:AddSwitch("🤖 Auto Buy Selected Items", function(state)
+Tabs.Pets.AlienShop.AutoBuySwitch = Tabs.Pets:AddSwitch("Auto Buy Selected Items", function(state)
 	Tabs.Pets.AlienShop.Data.Running = state
 	if not state then return end
 
