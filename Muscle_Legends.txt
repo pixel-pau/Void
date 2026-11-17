@@ -2936,7 +2936,6 @@ Tabs.Pets.AlienShop = {
 	}
 }
 
--- Jeton kontrolü (GymCurrencies -> AlienTokens)
 Tabs.Pets.AlienShop.getTokens = function()
 	local currencies = PlayerData.Player:FindFirstChild("GymCurrencies")
 	local tokens = currencies and currencies:FindFirstChild("AlienTokens")
@@ -2955,7 +2954,6 @@ Tabs.Pets.AlienShop.updateSelectedLabel = function()
 end
 
 Tabs.Pets.AlienShop.Dropdown = Tabs.Pets:AddDropdown("Select Alien Shop Items", function(displayName)
-	-- Seçilen görünen ismi internal (boşluksuz) isme çevirerek kaydet
 	for internalName, dName in pairs(Tabs.Pets.AlienShop.Data.DisplayNames) do
 		if dName == displayName then
 			Tabs.Pets.AlienShop.Data.SelectedItems[internalName] = not Tabs.Pets.AlienShop.Data.SelectedItems[internalName]
@@ -2965,59 +2963,41 @@ Tabs.Pets.AlienShop.Dropdown = Tabs.Pets:AddDropdown("Select Alien Shop Items", 
 	end
 end)
 
--- Dropdown listesini ekle
 for _, internalName in ipairs(Tabs.Pets.AlienShop.Data.AvailableItems) do
 	Tabs.Pets.AlienShop.Dropdown:Add(Tabs.Pets.AlienShop.Data.DisplayNames[internalName])
 	Tabs.Pets.AlienShop.Data.SelectedItems[internalName] = false
 end
 Tabs.Pets.AlienShop.updateSelectedLabel()
 
--- Satın alma fonksiyonu
 Tabs.Pets.AlienShop.buyItem = function(internalName)
 	pcall(function()
-		local playerGui = PlayerData.Player:FindFirstChild("PlayerGui")
-		local shopGui = playerGui and playerGui:FindFirstChild("alienShopGui")
-		if not shopGui then return end
+		local packages = Services.ReplicatedStorage:FindFirstChild("packages")
+		local net = packages and packages:FindFirstChild("net")
+		local rf = net and net:FindFirstChild("RF")
+		local alienShopRemote = rf and rf:FindFirstChild("AlienShop")
 
-		local rows = shopGui:FindFirstChild("Rows", true)
-		if not rows then return end
-
-		-- Konsolda gördüğümüz doğrudan eşleşen satırı bul (Örn: PlasmaDumbbell)
-		local itemRow = rows:FindFirstChild(internalName)
-		if itemRow then
-			local buyButton = itemRow:FindFirstChild("Buy") or itemRow:FindFirstChild("BuyButton") or itemRow:FindFirstChildWhichIsA("TextButton", true)
-			
-			if buyButton and buyButton:IsA("TextButton") then
-				-- Sadece butonun yazısı "Buy" ise ve stoktaysa tıkla (OUT yazanları eler)
-				if string.lower(buyButton.Text) == "buy" then
-					if getconnections then
-						for _, conn in ipairs(getconnections(buyButton.MouseButton1Click)) do
-							conn:Fire()
-						end
-						for _, conn in ipairs(getconnections(buyButton.Activated)) do
-							conn:Fire()
-						end
-					end
-				end
+		if alienShopRemote then
+			if alienShopRemote:IsA("RemoteFunction") then
+				alienShopRemote:InvokeServer(internalName)
+			elseif alienShopRemote:IsA("RemoteEvent") then
+				alienShopRemote:FireServer(internalName)
 			end
 		end
 	end)
 end
 
--- Otomatik Satın Alma Döngüsü Switch'i
-Tabs.Pets.AlienShop.AutoBuySwitch = Tabs.Pets:AddSwitch("Auto Buy Selected Items", function(state)
+Tabs.Pets.AlienShop.AutoBuySwitch = Tabs.Pets:AddSwitch("🤖 Auto Buy Selected Items", function(state)
 	Tabs.Pets.AlienShop.Data.Running = state
 	if not state then return end
 
 	task.spawn(function()
 		while Tabs.Pets.AlienShop.Data.Running do
 			pcall(function()
-				-- Jetonumuz varsa tarama yap
 				if Tabs.Pets.AlienShop.getTokens() > 0 then
 					for internalName, isSelected in pairs(Tabs.Pets.AlienShop.Data.SelectedItems) do
 						if isSelected then
 							Tabs.Pets.AlienShop.buyItem(internalName)
-							task.wait(0.2)
+							task.wait(0.3)
 						end
 					end
 				end
