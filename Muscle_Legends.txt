@@ -2908,6 +2908,107 @@ Tabs.Boss:AddSwitch("🎁 Auto Collect Chest", function(state)
     end)
 end)
 
+Tabs.Pets:AddLabel("----------------------------")
+Tabs.Pets:AddLabel("🛒 Alien Shop Auto Buy").TextSize = 19
+
+Tabs.Pets.AlienShop = {
+	Data = {
+		Running = false,
+		AvailableItems = {
+			"Plasma Dumbbell",
+			"Alien Bar",
+			"Alien Pull-Up Bar",
+			"Alien Treadmill",
+			"Lunar Slug",
+			"UFO Axolotl",
+			"Alien Serum"
+		},
+		SelectedItems = {}
+	}
+}
+
+-- Kullanıcının AlienTokens miktarını kontrol etme fonksiyonu
+Tabs.Pets.AlienShop.getTokens = function()
+	local currencies = PlayerData.Player:FindFirstChild("GymCurrencies")
+	local tokens = currencies and currencies:FindFirstChild("AlienTokens")
+	return tokens and tokens.Value or 0
+end
+
+Tabs.Pets.AlienShop.SelectedLabel = Tabs.Pets:AddLabel("Selected Items: None")
+Tabs.Pets.AlienShop.updateSelectedLabel = function()
+	local selected = {}
+	for itemName, isSelected in pairs(Tabs.Pets.AlienShop.Data.SelectedItems) do
+		if isSelected then
+			table.insert(selected, itemName)
+		end
+	end
+	Tabs.Pets.AlienShop.SelectedLabel.Text = "Selected Items: " .. (#selected > 0 and table.concat(selected, ", ") or "None")
+end
+
+Tabs.Pets.AlienShop.Dropdown = Tabs.Pets:AddDropdown("Select Alien Shop Items", function(itemName)
+	Tabs.Pets.AlienShop.Data.SelectedItems[itemName] = not Tabs.Pets.AlienShop.Data.SelectedItems[itemName]
+	Tabs.Pets.AlienShop.updateSelectedLabel()
+end)
+
+for _, itemName in ipairs(Tabs.Pets.AlienShop.Data.AvailableItems) do
+	Tabs.Pets.AlienShop.Dropdown:Add(itemName)
+	Tabs.Pets.AlienShop.Data.SelectedItems[itemName] = false
+end
+Tabs.Pets.AlienShop.updateSelectedLabel()
+
+-- Satın alma fonksiyonu (alienShopGui içerisindeki satırları ve Buy butonunu bulur)
+Tabs.Pets.AlienShop.buyItem = function(itemName)
+	pcall(function()
+		local playerGui = PlayerData.Player:FindFirstChild("PlayerGui")
+		local shopGui = playerGui and playerGui:FindFirstChild("alienShopGui")
+		if not shopGui then return end
+
+		local rows = shopGui:FindFirstChild("Rows", true)
+		if not rows then return end
+
+		-- Seçilen ürünün satırını bul
+		local itemRow = rows:FindFirstChild(itemName, true)
+		if itemRow then
+			-- Satırın içindeki Buy butonunu ara
+			local buyButton = itemRow:FindFirstChild("Buy") or itemRow:FindFirstChild("BuyButton") or itemRow:FindFirstChildWhichIsA("TextButton", true)
+			
+			if buyButton and buyButton:IsA("TextButton") then
+				-- Jeton kontrolü (Örn: Plasma Dumbbell 200 token istiyor)
+				local tokens = Tabs.Pets.AlienShop.getTokens()
+				if tokens >= 200 then -- Genel bir güvenlik payı, butonun kendisi de kontrol eder
+					if getconnections then
+						for _, conn in ipairs(getconnections(buyButton.MouseButton1Click)) do
+							conn:Fire()
+						end
+						for _, conn in ipairs(getconnections(buyButton.Activated)) do
+							conn:Fire()
+						end
+					end
+				end
+			end
+		end
+	end)
+end
+
+Tabs.Pets.AlienShop.AutoBuySwitch = Tabs.Pets:AddSwitch("🤖 Auto Buy Selected Items", function(state)
+	Tabs.Pets.AlienShop.Data.Running = state
+	if not state then return end
+
+	task.spawn(function()
+		while Tabs.Pets.AlienShop.Data.Running do
+			pcall(function()
+				for itemName, isSelected in pairs(Tabs.Pets.AlienShop.Data.SelectedItems) do
+					if isSelected then
+						Tabs.Pets.AlienShop.buyItem(itemName)
+						task.wait(0.5)
+					end
+				end
+			end)
+			task.wait(1)
+		end
+	end)
+end)
+
 Tabs.Pets:AddLabel("💰 Auto Buy")
 
 local selectedPet = "Orange Hedgehog"
